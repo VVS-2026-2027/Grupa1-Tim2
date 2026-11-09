@@ -1,0 +1,382 @@
+﻿@model IEnumerable<Earn_Learn.Models.Korisnik>
+@{
+    ViewData["Title"] = "Upravljaj korisnicima";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var tutori = Model.Where(k => k.Uloga == Earn_Learn.Enums.Uloga.Tutor).ToList();
+    var studenti = Model.Where(k => k.Uloga == Earn_Learn.Enums.Uloga.Student).ToList();
+}
+
+<style>
+    * {
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .uk-wrap {
+        max-width: 900px;
+        margin: 40px auto 60px;
+        padding: 0 20px;
+    }
+
+    .uk-stats {
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        padding: 50px 20px 30px;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    .uk-stat .broj {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0d2d45;
+        line-height: 1;
+    }
+
+    .uk-stat .label {
+        font-size: .95rem;
+        color: #888;
+        margin-top: 6px;
+    }
+
+    .uk-section-title {
+        font-size: 1.1rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin: 30px 0 10px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .uk-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 0;
+        border-bottom: 1px solid #f5f5f5;
+        gap: 12px;
+    }
+
+        .uk-row:last-child {
+            border-bottom: none;
+        }
+
+    .uk-ime {
+        font-size: .95rem;
+        font-weight: 700;
+        color: #222;
+        min-width: 180px;
+    }
+
+    .uk-info {
+        font-size: .88rem;
+        color: #888;
+        flex: 1;
+    }
+
+    .uk-actions {
+        display: flex;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .btn-profil {
+        background: #e3f2fd;
+        color: #1565c0;
+        border: none;
+        border-radius: 8px;
+        padding: 5px 12px;
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: background .2s;
+    }
+
+        .btn-profil:hover {
+            background: #bbdefb;
+            color: #1565c0;
+        }
+
+    .btn-uredi {
+        background: #e8f5e9;
+        color: #2e7d32;
+        border: none;
+        border-radius: 8px;
+        padding: 5px 12px;
+        font-size: .78rem;
+        font-weight: 700;
+        text-decoration: none;
+        display: inline-block;
+        transition: background .2s;
+        cursor: pointer;
+    }
+
+        .btn-uredi:hover {
+            background: #c8e6c9;
+            color: #2e7d32;
+        }
+
+    .btn-obrisi {
+        background: #ffe5e5;
+        color: #c0392b;
+        border: none;
+        border-radius: 8px;
+        padding: 5px 12px;
+        font-size: .78rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .2s;
+    }
+
+        .btn-obrisi:hover {
+            background: #ffcccc;
+        }
+
+    .btn-prikazi-sve {
+        display: block;
+        margin: 16px auto 0;
+        background: #0d2d45;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 8px 28px;
+        font-size: .88rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity .2s;
+    }
+
+        .btn-prikazi-sve:hover {
+            opacity: .85;
+        }
+
+    .uk-empty {
+        text-align: center;
+        padding: 30px;
+        color: #aaa;
+        font-size: .95rem;
+    }
+</style>
+
+@{
+    var ukupnoTutora = tutori.Count;
+    var ukupnoStudenata = studenti.Count;
+    var novihTutora = tutori.OrderByDescending(t => t.DatumRegistracije).Take(3).Count();
+    var novihStudenata = studenti.OrderByDescending(s => s.DatumRegistracije).Take(3).Count();
+    int prikaziTutora = 6;
+    int prikaziStudenata = 6;
+}
+
+<div class="uk-stats">
+    <div class="uk-stat">
+        <div class="broj">@ukupnoTutora</div>
+        <div class="label">Dostupni tutori</div>
+    </div>
+    <div class="uk-stat">
+        <div class="broj">@novihTutora</div>
+        <div class="label">Novi tutori</div>
+    </div>
+    <div class="uk-stat">
+        <div class="broj">@tutori.Count(t => t.PrilogOcjene == null)</div>
+        <div class="label">Čekaju verifikaciju</div>
+    </div>
+</div>
+
+<div class="uk-wrap">
+
+    <!-- TUTORI -->
+    <div class="uk-section-title">Tutori</div>
+
+    @if (!tutori.Any())
+    {
+        <div class="uk-empty">Nema tutora.</div>
+    }
+    else
+    {
+        <div id="lista-tutora">
+            @for (int i = 0; i < tutori.Count; i++)
+            {
+                var k = tutori[i];
+                <div class="uk-row" style="@(i >= prikaziTutora ? "display:none;" : "")">
+                    <span class="uk-ime">@k.Ime @k.Prezime</span>
+
+                    <div class="uk-actions">
+                        <a class="btn-profil" asp-controller="Tutor" asp-action="Profil" asp-route-id="@k.Id">👤 Profil</a>
+                        <button class="btn-uredi" onclick="otvoriUrediKorisnika('@k.Id', '@k.Ime', '@k.Prezime', '@k.Email')">✏ uredi</button>
+                        <form asp-action="ObrisiKorisnika" method="post" style="display:inline;"
+                              onsubmit="return confirm('Obrisati korisnika @k.Ime @k.Prezime?')">
+                            <input type="hidden" name="id" value="@k.Id" />
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-obrisi">🗑 obriši</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (tutori.Count > prikaziTutora)
+        {
+            <button class="btn-prikazi-sve" onclick="prikaziSve('lista-tutora', this)">Prikaži sve tutore</button>
+        }
+    }
+
+    <!-- STUDENTI -->
+    <div class="uk-stats" style="padding: 40px 0 20px;">
+        <div class="uk-stat">
+            <div class="broj">@ukupnoStudenata</div>
+            <div class="label">Prijavljeni studenti</div>
+        </div>
+        <div class="uk-stat">
+            <div class="broj">@novihStudenata</div>
+            <div class="label">Novi studenti</div>
+        </div>
+    </div>
+
+    <div class="uk-section-title">Studenti</div>
+
+    @if (!studenti.Any())
+    {
+        <div class="uk-empty">Nema studenata.</div>
+    }
+    else
+    {
+        <div id="lista-studenata">
+            @for (int i = 0; i < studenti.Count; i++)
+            {
+                var k = studenti[i];
+                <div class="uk-row" style="@(i >= prikaziStudenata ? "display:none;" : "")">
+                    <span class="uk-ime">@k.Ime @k.Prezime</span>
+
+                    <div class="uk-actions">
+                        <a class="btn-profil" asp-controller="Student" asp-action="Profil" asp-route-id="@k.Id">👤 Profil</a>
+                        <button class="btn-uredi" onclick="otvoriUrediKorisnika('@k.Id', '@k.Ime', '@k.Prezime', '@k.Email')">✏ uredi</button>
+                        <form asp-action="ObrisiKorisnika" method="post" style="display:inline;"
+                              onsubmit="return confirm('Obrisati korisnika @k.Ime @k.Prezime?')">
+                            <input type="hidden" name="id" value="@k.Id" />
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-obrisi">🗑 obriši</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+        @if (studenti.Count > prikaziStudenata)
+        {
+            <button class="btn-prikazi-sve" onclick="prikaziSve('lista-studenata', this)">Prikaži sve studente</button>
+        }
+    }
+</div>
+
+<!-- Modal: Uredi korisnika -->
+<div class="modal-overlay" id="modal-uredi-korisnika">
+    <div class="modal-box">
+        <h3>Uredi korisnika</h3>
+        <form asp-action="UrediKorisnika" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="uk-id" name="id" />
+            <input type="text" id="uk-ime" name="ime" placeholder="Ime" required />
+            <input type="text" id="uk-prezime" name="prezime" placeholder="Prezime" required style="margin-top:10px;" />
+            <input type="email" id="uk-email" name="email" placeholder="Email" required style="margin-top:10px;" />
+            <div class="modal-actions" style="margin-top:18px;">
+                <button type="button" class="btn-cancel" onclick="zatvoriModal('uredi-korisnika')">Odustani</button>
+                <button type="submit" class="btn-save">Sačuvaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<style>
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,.45);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+    .modal-box {
+        background: #fff;
+        border-radius: 16px;
+        padding: 36px 40px;
+        width: 100%;
+        max-width: 440px;
+        box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    }
+
+        .modal-box h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 18px;
+        }
+
+        .modal-box input[type=text],
+        .modal-box input[type=email] {
+            width: 100%;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            padding: 10px 14px;
+            font-size: .95rem;
+            outline: none;
+            box-sizing: border-box;
+            display: block;
+        }
+
+        .modal-box input:focus {
+            border-color: #5bc400;
+        }
+
+    .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .btn-cancel {
+        background: #f0f0f0;
+        color: #555;
+        border: none;
+        border-radius: 10px;
+        padding: 9px 20px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+
+    .btn-save {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 9px 20px;
+        font-weight: 700;
+        cursor: pointer;
+    }
+</style>
+
+@section Scripts {
+    <script>
+        function prikaziSve(listaId, btn) {
+            document.querySelectorAll('#' + listaId + ' .uk-row').forEach(r => r.style.display = '');
+            btn.style.display = 'none';
+        }
+        function otvoriUrediKorisnika(id, ime, prezime, email) {
+            document.getElementById('uk-id').value = id;
+            document.getElementById('uk-ime').value = ime;
+            document.getElementById('uk-prezime').value = prezime;
+            document.getElementById('uk-email').value = email;
+            document.getElementById('modal-uredi-korisnika').classList.add('active');
+        }
+        function zatvoriModal(tip) {
+            document.getElementById('modal-' + tip).classList.remove('active');
+        }
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.addEventListener('click', e => { if (e.target === el) el.classList.remove('active'); });
+        });
+    </script>
+}

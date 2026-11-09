@@ -1,0 +1,488 @@
+﻿@model Earn_Learn.Models.TutorDashboardViewModel
+@{
+    ViewData["Title"] = "Tutor Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .tdash-wrapper {
+        color: #fff;
+        padding-bottom: 60px;
+    }
+
+    .tdash-hero {
+        background: #0d2d45;
+        padding: 70px 20px 80px;
+        text-align: center;
+    }
+
+        .tdash-hero h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .tdash-hero h2 {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #a0b8c8;
+        }
+
+            .tdash-hero h2 span {
+                color: #5bc400;
+            }
+
+    .tdash-stats {
+        background: #0d2d45;
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        padding: 40px 20px 60px;
+        flex-wrap: wrap;
+    }
+
+    .tdash-stat {
+        text-align: center;
+    }
+
+        .tdash-stat .broj {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #fff;
+        }
+
+        .tdash-stat .label {
+            font-size: .95rem;
+            color: #a0b8c8;
+            margin-top: 4px;
+        }
+
+    /* ── GRAFIKON ── */
+    .tdash-grafikon-wrapper {
+        max-width: 960px;
+        margin: 40px auto 0;
+        padding: 0 20px;
+    }
+
+    .tdash-grafikon-box {
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 12px rgba(0,0,0,.06);
+    }
+
+    .tdash-grafikon-header {
+        background: #e8f5e0;
+        color: #0d2d45;
+        padding: 16px 24px;
+        font-size: 1.2rem;
+        font-weight: 800;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .grafikon-filter {
+        display: flex;
+        gap: 8px;
+    }
+
+    .btn-filter {
+        background: #fff;
+        border: 2px solid #5bc400;
+        color: #5bc400;
+        border-radius: 20px;
+        padding: 5px 16px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-filter.aktivan, .btn-filter:hover {
+            background: #5bc400;
+            color: #fff;
+        }
+
+    .grafikon-summary {
+        display: flex;
+        gap: 32px;
+        padding: 18px 24px 0;
+        flex-wrap: wrap;
+    }
+
+    .grafikon-summary-item .gs-iznos {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0d2d45;
+    }
+
+    .grafikon-summary-item .gs-label {
+        font-size: .78rem;
+        font-weight: 700;
+        color: #aaa;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .grafikon-canvas-wrap {
+        padding: 16px 24px 24px;
+    }
+
+    /* ── TERMINI ── */
+    .tdash-termini {
+        max-width: 960px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    .tdash-termini-header {
+        background: #e8f5e0;
+        color: #0d2d45;
+        padding: 16px 24px;
+        border-radius: 10px 10px 0 0;
+        font-size: 1.2rem;
+        font-weight: 800;
+    }
+
+    .tdash-table-head {
+        display: grid;
+        grid-template-columns: 2fr 1.6fr 1.8fr 0.8fr 1.1fr 90px;
+        padding: 10px 24px;
+        background: #f7f7f7;
+        border-bottom: 2px solid #e8f5e0;
+        font-size: .75rem;
+        font-weight: 700;
+        color: #5bc400;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+    }
+
+    .tdash-termin-row {
+        display: grid;
+        grid-template-columns: 2fr 1.6fr 1.8fr 0.8fr 1.1fr 90px;
+        align-items: center;
+        padding: 15px 24px;
+        border-bottom: 1px solid #f0f0f0;
+        background: #fff;
+        color: #0d2d45;
+        transition: background .15s;
+    }
+
+        .tdash-termin-row:hover {
+            background: #fafffe;
+        }
+
+        .tdash-termin-row:last-child {
+            border-bottom: none;
+            border-radius: 0 0 10px 10px;
+        }
+
+    .tdash-predmet {
+        font-weight: 700;
+        font-size: .95rem;
+        color: #0d2d45;
+        word-break: break-word;
+        line-height: 1.3;
+        min-width: 0;
+        padding-right: 16px;
+    }
+
+    .tdash-student {
+        font-size: .88rem;
+        color: #444;
+    }
+
+        .tdash-student.slobodan {
+            font-size: .85rem;
+            color: #bbb;
+            font-style: italic;
+        }
+
+    .tdash-datum {
+        font-size: .87rem;
+        color: #555;
+    }
+
+    .tdash-tip {
+        font-size: .85rem;
+        color: #666;
+    }
+
+    .badge {
+        display: inline-block;
+        padding: 4px 11px;
+        border-radius: 20px;
+        font-size: .74rem;
+        font-weight: 700;
+        letter-spacing: .02em;
+    }
+
+    .badge-rezervisan {
+        background: #fff3e0;
+        color: #e65c00;
+    }
+
+    .badge-slobodan {
+        background: #e8f5e0;
+        color: #2e7d00;
+    }
+
+    .btn-otkai {
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: .80rem;
+        font-weight: 700;
+        cursor: pointer;
+        color: #555;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: background .2s, border-color .2s, color .2s;
+        white-space: nowrap;
+    }
+
+        .btn-otkai:hover {
+            background: #ffe0e0;
+            border-color: #f88;
+            color: #c00;
+        }
+
+    .no-termini {
+        color: #999;
+        padding: 28px 24px;
+        background: #fff;
+        border-radius: 0 0 10px 10px;
+        font-size: .95rem;
+    }
+
+    .alert-success {
+        max-width: 960px;
+        margin: 20px auto 0;
+        padding: 13px 22px;
+        background: #e8f5e0;
+        color: #2e7d00;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .93rem;
+    }
+
+    .alert-error {
+        max-width: 960px;
+        margin: 20px auto 0;
+        padding: 13px 22px;
+        background: #fff0f0;
+        color: #c00;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .93rem;
+    }
+</style>
+
+<div class="tdash-wrapper">
+
+    <!-- HERO -->
+    <div class="tdash-hero">
+        <h1>Zdravo, @Model.Ime!</h1>
+        <h2>Tvoja zarada ovog mjeseca: <span>@(((double)ViewBag.ZaradaOvajMjesec).ToString("0.00")) KM</span></h2>
+    </div>
+
+    <!-- STATISTIKE -->
+    <div class="tdash-stats">
+        <div class="tdash-stat">
+            <div class="broj">@Model.BrojCasova</div>
+            <div class="label">Ukupno časova</div>
+        </div>
+        <div class="tdash-stat">
+            <div class="broj">@Model.ProsjecnaOcjena.ToString("0.0")★</div>
+            <div class="label">Prosječna ocjena</div>
+        </div>
+        <div class="tdash-stat">
+            <div class="broj">@Model.Balans.ToString("0") KM</div>
+            <div class="label">Dostupan balans</div>
+        </div>
+    </div>
+
+    <!-- ALERTS -->
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-success">✓ @TempData["Uspjeh"]</div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert-error">✗ @TempData["Greska"]</div>
+    }
+
+    <!-- GRAFIKON ZARADE -->
+    <div class="tdash-grafikon-wrapper">
+        <div class="tdash-grafikon-box">
+            <div class="tdash-grafikon-header">
+                Zarada — @ViewBag.Godina
+                <div class="grafikon-filter">
+                    <button class="btn-filter aktivan" id="btnMjesec" onclick="prikaziMjesec()">Ovaj mjesec</button>
+                    <button class="btn-filter" id="btnGodina" onclick="prikaziGodinu()">Ova godina</button>
+                </div>
+            </div>
+            <div class="grafikon-summary">
+                <div class="grafikon-summary-item">
+                    <div class="gs-iznos" id="sumIznos">@(((double)ViewBag.ZaradaOvajMjesec).ToString("0.00")) KM</div>
+                    <div class="gs-label" id="sumLabel">Zarada ovog mjeseca</div>
+                </div>
+            </div>
+            <div class="grafikon-canvas-wrap">
+                <canvas id="zaradaChart" height="90"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- NADOLAZEĆI TERMINI -->
+    <div class="tdash-termini" style="margin-top: 40px;">
+        <div class="tdash-termini-header">Nadolazeći časovi</div>
+
+        @if (Model.NadolazaciTermini.Any())
+        {
+            <div class="tdash-table-head">
+                <span>Predmet</span>
+                <span>Student</span>
+                <span>Datum i vrijeme</span>
+                <span>Tip</span>
+                <span>Status</span>
+                <span></span>
+            </div>
+
+            @foreach (var item in Model.NadolazaciTermini)
+            {
+                var t = item.Termin;
+                var tipLabel = t.tipInstrukcija.ToString() == "Online" ? "Online" : "Uživo";
+                var statusLabel = t.status.ToString() == "Rezervisan" ? "Rezervisan" : "Slobodan";
+                var badgeClass = statusLabel == "Rezervisan" ? "badge-rezervisan" : "badge-slobodan";
+
+                <div class="tdash-termin-row">
+                    <span class="tdash-predmet" title="@(item.ImePredmeta ?? "—")">@(item.ImePredmeta ?? "—")</span>
+
+                    @if (!string.IsNullOrEmpty(item.ImeStudenta))
+                    {
+                        <span class="tdash-student">@item.ImeStudenta</span>
+                    }
+                    else
+                    {
+                        <span class="tdash-student slobodan">Slobodan termin</span>
+                    }
+
+                    <span class="tdash-datum">@t.datumIVrijeme.ToString("dd. MMM yyyy. 'u' HH:mm")</span>
+                    <span class="tdash-tip">@tipLabel</span>
+                    <span><span class="badge @badgeClass">@statusLabel</span></span>
+
+                    <form method="post" asp-action="OtkaziTermin" asp-controller="Tutor"
+                          onsubmit="return confirm('Sigurno želiš otkazati ovaj termin?')">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="terminId" value="@t.id" />
+                        <button type="submit" class="btn-otkai">🗑 otkaži</button>
+                    </form>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-termini">Nemaš nadolazećih časova.</div>
+        }
+    </div>
+
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+    const zaradaPoMjesecima = @Html.Raw(ViewBag.ZaradaPoMjesecima);
+    const zaradaOvajMjesec  = @(((double)ViewBag.ZaradaOvajMjesec).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture));
+    const zaradaOvaGodina   = @(((double)ViewBag.ZaradaOvaGodina).ToString("0.00", System.Globalization.CultureInfo.InvariantCulture));
+
+    const mjeseciLabels  = ["Jan","Feb","Mar","Apr","Maj","Jun","Jul","Aug","Sep","Okt","Nov","Dec"];
+    const trenutniMjesec = new Date().getMonth(); // 0-indexed
+
+    // Pocetni prikaz: samo tekuci mjesec, ostali su 0
+    const podaciMjesec = zaradaPoMjesecima.map((v, i) => i === trenutniMjesec ? v : 0);
+
+    const ctx = document.getElementById('zaradaChart').getContext('2d');
+
+    const chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+    labels: mjeseciLabels,
+    datasets: [{
+    label: 'Zarada (KM)',
+    data: podaciMjesec,
+    backgroundColor: mjeseciLabels.map((_, i) =>
+    i === trenutniMjesec ? '#5bc400' : '#d4f0a8'
+    ),
+    borderRadius: 6,
+    borderSkipped: false,
+    }]
+    },
+    options: {
+    responsive: true,
+    plugins: {
+    legend: { display: false },
+    tooltip: {
+    callbacks: {
+    label: ctx => ` ${ctx.parsed.y.toFixed(2)} KM`
+    }
+    }
+    },
+    scales: {
+    x: {
+    grid: { display: false },
+    ticks: {
+    font: { weight: '700', size: 12 },
+    color: (c) => c.index === trenutniMjesec ? '#0d2d45' : '#bbb'
+    }
+    },
+    y: {
+    beginAtZero: true,
+    // min 10 da y-osa ne ide 0-1 kad nema podataka
+    max: Math.max(...podaciMjesec, 10),
+    grid: { color: '#f0f0f0' },
+    ticks: {
+    callback: val => val + ' KM',
+    font: { size: 11 },
+    color: '#888'
+    }
+    }
+    }
+    }
+    });
+
+    function prikaziMjesec() {
+    const podaci = zaradaPoMjesecima.map((v, i) => i === trenutniMjesec ? v : 0);
+    chart.data.datasets[0].data = podaci;
+    chart.data.datasets[0].backgroundColor = mjeseciLabels.map((_, i) =>
+    i === trenutniMjesec ? '#5bc400' : '#d4f0a8'
+    );
+    chart.options.scales.y.max = Math.max(...podaci, 10);
+    chart.update();
+
+    document.getElementById('sumIznos').textContent = zaradaOvajMjesec + ' KM';
+    document.getElementById('sumLabel').textContent  = 'Zarada ovog mjeseca';
+    document.getElementById('btnMjesec').classList.add('aktivan');
+    document.getElementById('btnGodina').classList.remove('aktivan');
+    }
+
+    function prikaziGodinu() {
+    chart.data.datasets[0].data = zaradaPoMjesecima;
+    chart.data.datasets[0].backgroundColor = mjeseciLabels.map((_, i) =>
+    i === trenutniMjesec ? '#5bc400' : '#d4f0a8'
+    );
+    chart.options.scales.y.max = Math.max(...zaradaPoMjesecima, 10);
+    chart.update();
+
+    document.getElementById('sumIznos').textContent = zaradaOvaGodina + ' KM';
+    document.getElementById('sumLabel').textContent  = 'Zarada ove godine';
+    document.getElementById('btnGodina').classList.add('aktivan');
+    document.getElementById('btnMjesec').classList.remove('aktivan');
+    }
+</script>

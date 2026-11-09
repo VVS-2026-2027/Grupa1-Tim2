@@ -1,0 +1,123 @@
+﻿@model Earn_Learn.Models.AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .adash-hero {
+        background: #0d2d45;
+        padding: 80px 20px;
+        text-align: center;
+        color: #fff;
+    }
+
+        .adash-hero h1 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .adash-hero h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #a0b8c8;
+        }
+
+            .adash-hero h2 a {
+                color: #5bc400;
+                text-decoration: none;
+                border-bottom: 2px solid transparent;
+                transition: border-color .2s;
+            }
+
+                .adash-hero h2 a:hover {
+                    border-bottom-color: #5bc400;
+                }
+
+    .adash-stats {
+        display: flex;
+        justify-content: center;
+        gap: 60px;
+        flex-wrap: wrap;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+    .adash-stat .broj {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0d2d45;
+    }
+
+    .adash-stat .label {
+        font-size: .95rem;
+        color: #888;
+        margin-top: 6px;
+    }
+
+    .adash-actions {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+        flex-wrap: wrap;
+        padding: 20px;
+        margin-bottom: 60px;
+    }
+
+    .btn-admin {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 14px;
+        padding: 22px 50px;
+        font-size: 1rem;
+        font-weight: 800;
+        letter-spacing: 1px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: opacity .2s;
+    }
+
+        .btn-admin:hover {
+            opacity: .85;
+            color: #fff;
+        }
+</style>
+
+<div class="adash-hero">
+    <h1>Zdravo, Admin!</h1>
+    <h2>
+        Trenutno imaš
+        <a asp-controller="SystemManager" asp-action="Zahtjevi">@Model.ZahtjevaNCekanju zahtjeva</a>
+        na čekanju
+    </h2>
+</div>
+
+<div class="adash-stats">
+    <div class="adash-stat">
+        <div class="broj">@Model.UkupnoKorisnika.ToString("N0")</div>
+        <div class="label">Broj korisnika</div>
+    </div>
+    <div class="adash-stat">
+        <div class="broj">@Model.UkupnoTutora.ToString("N0")</div>
+        <div class="label">Broj tutora</div>
+    </div>
+    <div class="adash-stat">
+        <div class="broj">@Model.AktivnihSesija.ToString("N0")</div>
+        <div class="label">Aktivne sesije</div>
+    </div>
+    <div class="adash-stat">
+        <div class="broj">@Model.UkupanPromet.ToString("N0") KM</div>
+        <div class="label">Ukupna zarada</div>
+    </div>
+    <div class="adash-stat">
+        <div class="broj">@Model.MjesecniPromet.ToString("N0") KM</div>
+        <div class="label">Mjesečna zarada</div>
+    </div>
+</div>
+
+<div class="adash-actions">
+    <a asp-controller="SystemManager" asp-action="UpravljajKorisnicima" class="btn-admin">UPRAVLJAJ KORISNICIMA</a>
+    <a asp-controller="SystemManager" asp-action="UpravljajPredmetima" class="btn-admin">UPRAVLJAJ PREDMETIMA</a>
+</div>

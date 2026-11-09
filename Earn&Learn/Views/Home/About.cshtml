@@ -1,0 +1,197 @@
+﻿@{
+    ViewData["Title"] = "O nama";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* ── HERO ── */
+    .ab-hero {
+        background: #b0c8d8;
+        padding: 80px 20px 100px;
+        text-align: center;
+        margin: 0 30px 0;
+        border-radius: 0 0 18px 18px;
+    }
+
+        .ab-hero h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 8px;
+            letter-spacing: .03em;
+        }
+
+        .ab-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+    /* ── CARDS ROW ── */
+    .ab-cards {
+        display: flex;
+        gap: 20px;
+        max-width: 820px;
+        margin: 20px auto 0;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .ab-card {
+        flex: 1;
+        border-radius: 18px;
+        padding: 36px 30px 28px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        min-height: 260px;
+    }
+
+        .ab-card.izazov {
+            background: #7a7a6e;
+            color: #fff;
+        }
+
+        .ab-card.rjesenje {
+            background: #5bc400;
+            color: #fff;
+        }
+
+        .ab-card p {
+            font-size: .93rem;
+            line-height: 1.65;
+            margin: 0 0 24px;
+            opacity: .93;
+        }
+
+        .ab-card .card-label {
+            font-weight: 800;
+            font-size: .85rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            opacity: .85;
+        }
+
+    /* ── VRIJEDNOSTI ── */
+    .ab-values {
+        background: #b0c8d8;
+        margin: 40px 30px 0;
+        border-radius: 18px;
+        padding: 50px 20px;
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        flex-wrap: wrap;
+    }
+
+    .ab-value-item {
+        text-align: center;
+    }
+
+        .ab-value-item .val-icon {
+            font-size: 2rem;
+            color: #0d2d45;
+            margin-bottom: 10px;
+        }
+
+        .ab-value-item span {
+            display: block;
+            font-weight: 700;
+            color: #0d2d45;
+            font-size: 1rem;
+        }
+
+    /* ── CTA ── */
+    .ab-cta {
+        text-align: center;
+        padding: 60px 20px 50px;
+    }
+
+        .ab-cta h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 10px;
+        }
+
+        .ab-cta p {
+            color: #888;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 28px;
+        }
+
+    .btn-pridruzise {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 13px 38px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: opacity .2s, transform .15s;
+        display: inline-block;
+    }
+
+        .btn-pridruzise:hover {
+            opacity: .88;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+</style>
+
+<!-- HERO -->
+<section class="ab-hero">
+    <h2>Naša Misija</h2>
+    <h1>Povezujemo znanje i prilike<br>na ETF Sarajevo.</h1>
+</section>
+
+<!-- CARDS -->
+<div class="ab-cards">
+    <div class="ab-card izazov">
+        <p>
+            Studenti se na ETF-u često suočavaju sa izazovnim gradivom, ali je ponekad najteži zadatak zapravo
+            pronaći pravu osobu za pomoć.<br><br>
+            Dok mnogi studenti lutaju tražeći provjerene instrukcije, talentovani tutori među našim kolegama
+            nemaju adekvatan prostor da promovišu svoje znanje i vještine.
+        </p>
+        <span class="card-label">Izazov</span>
+    </div>
+    <div class="ab-card rjesenje">
+        <p>
+            Earn&amp;Learn je nastao kao odgovor na ovaj jaz, stvarajući digitalni most koji direktno povezuje one
+            koji traže znanje s onima koji ga žele podijeliti.<br><br>
+            Naša platforma omogućava tutorima da izgrade svoj profesionalni profil i steknu kredibilitet kroz
+            recenzije, dok studentima nudi siguran i brz način da dođu do potrebne pomoći.
+        </p>
+        <span class="card-label">Naše Rješenje</span>
+    </div>
+</div>
+
+<!-- VRIJEDNOSTI -->
+<section class="ab-values">
+    <div class="ab-value-item">
+        <div class="val-icon"><i class="bi bi-shield-check"></i></div>
+        <span>Integritet</span>
+    </div>
+    <div class="ab-value-item">
+        <div class="val-icon"><i class="bi bi-people"></i></div>
+        <span>Zajednica</span>
+    </div>
+    <div class="ab-value-item">
+        <div class="val-icon"><i class="bi bi-journal-bookmark"></i></div>
+        <span>Znanje</span>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="ab-cta">
+    <h2>Pridruži nam se</h2>
+    <p>Budi dio zajednice ETF Sarajevo i rastimo zajedno.</p>
+    <a class="btn-pridruzise" asp-area="Identity" asp-page="/Account/Register">Pridruži nam se</a>
+</section>

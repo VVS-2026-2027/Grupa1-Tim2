@@ -1,0 +1,95 @@
+﻿@{
+    ViewData["Title"] = "Verifikacija na čekanju";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .pending-wrapper {
+        min-height: 70vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f4f8fb;
+    }
+
+    .pending-card {
+        text-align: center;
+        padding: 70px 50px;
+        max-width: 520px;
+    }
+
+    .pending-icon {
+        font-size: 4rem;
+        margin-bottom: 24px;
+        display: block;
+    }
+
+    .pending-card h1 {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin-bottom: 16px;
+    }
+
+    .pending-card p {
+        font-size: 1rem;
+        color: #666;
+        line-height: 1.7;
+        margin-bottom: 12px;
+    }
+
+    .pending-badge {
+        display: inline-block;
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+        border-radius: 20px;
+        padding: 8px 22px;
+        font-size: .9rem;
+        font-weight: 700;
+        margin-top: 20px;
+    }
+
+    .btn-odjava {
+        display: inline-block;
+        margin-top: 36px;
+        background: transparent;
+        border: 2px solid #0d2d45;
+        color: #0d2d45;
+        border-radius: 10px;
+        padding: 10px 28px;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: .95rem;
+        transition: background .2s, color .2s;
+    }
+
+        .btn-odjava:hover {
+            background: #0d2d45;
+            color: #fff;
+        }
+</style>
+
+<div class="pending-wrapper">
+    <div class="pending-card">
+        <span class="pending-icon">⏳</span>
+        <h1>Zahtjev za verifikaciju na čekanju</h1>
+        <p>
+            Hvala što ste se registrovali kao tutor na Earn&amp;Learn platformi.
+        </p>
+        <p>
+            Vaš nalog je uspješno kreiran i dokumentacija je primljena.
+            Naš tim će pregledati vašu prijavu i verifikovati vaš nalog u što kraćem roku.
+        </p>
+        <p>
+            Nakon verifikacije imat ćete pun pristup tutor dashboardu,
+            kreiranju termina i svim ostalim funkcionalnostima.
+        </p>
+        <div class="pending-badge">🕐 Na čekanju</div>
+        <br />
+        <form method="post" asp-controller="Account" asp-action="Logout" style="display:inline">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn-odjava">Odjavi se</button>
+        </form>
+    </div>
+</div>

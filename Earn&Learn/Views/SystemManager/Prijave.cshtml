@@ -1,0 +1,215 @@
+﻿@model List<Earn_Learn.Models.Prijava>
+@{
+    ViewData["Title"] = "Prijave";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .pr-page {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+
+    .pr-count {
+        text-align: center;
+        margin-bottom: 50px;
+    }
+
+        .pr-count .broj {
+            font-size: 4rem;
+            font-weight: 800;
+            color: #111;
+            line-height: 1;
+        }
+
+        .pr-count .label {
+            font-size: .95rem;
+            color: #888;
+            margin-top: 6px;
+        }
+
+    .pr-row {
+        display: grid;
+        grid-template-columns: 1fr auto 1.5fr;
+        align-items: center;
+        gap: 20px;
+        padding: 18px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .pr-row:last-child {
+            border-bottom: none;
+        }
+
+    .pr-naslov {
+        font-size: .95rem;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .pr-opis {
+        font-size: .88rem;
+        color: #555;
+        margin-top: 4px;
+    }
+
+    .pr-datum {
+        font-size: .85rem;
+        color: #888;
+        text-align: right;
+        white-space: nowrap;
+    }
+
+    .btn-posj {
+        background: transparent;
+        border: 2px solid #e00;
+        color: #e00;
+        border-radius: 20px;
+        padding: 6px 18px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        white-space: nowrap;
+        text-decoration: none;
+        transition: background .15s, color .15s;
+    }
+
+        .btn-posj:hover {
+            background: #e00;
+            color: #fff;
+        }
+
+    .pr-actions {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+        justify-content: flex-end;
+    }
+
+    .btn-obrisi {
+        background: transparent;
+        border: 2px solid #aaa;
+        color: #555;
+        border-radius: 20px;
+        padding: 6px 14px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .15s, color .15s;
+    }
+
+        .btn-obrisi:hover {
+            background: #f0f0f0;
+        }
+
+    .pr-empty {
+        text-align: center;
+        padding: 60px 0;
+        color: #aaa;
+        font-size: 1rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 2px 10px;
+        border-radius: 12px;
+        font-size: .75rem;
+        font-weight: 700;
+        margin-top: 4px;
+    }
+
+    .s-prijavljeno {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .s-nacekanju {
+        background: #fff0e0;
+        color: #c45000;
+    }
+
+    .s-rijeseno {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .alert-ok {
+        background: #e8f5e0;
+        color: #2e7d00;
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin-bottom: 24px;
+        font-weight: 600;
+    }
+</style>
+
+<div class="pr-page">
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-ok">✓ @TempData["Uspjeh"]</div>
+    }
+
+    <div class="pr-count">
+        <div class="broj">@Model.Count(p => p.Status != Earn_Learn.Enums.StatusPrijave.Rijeseno)</div>
+        <div class="label">Novi zahtjevi</div>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="pr-empty">Nema prijava.</div>
+    }
+    else
+    {
+        @foreach (var p in Model)
+        {
+            var statusClass = p.Status switch
+            {
+                Earn_Learn.Enums.StatusPrijave.Prijavljeno => "s-prijavljeno",
+                Earn_Learn.Enums.StatusPrijave.NaCekanju => "s-nacekanju",
+                Earn_Learn.Enums.StatusPrijave.Rijeseno => "s-rijeseno",
+                _ => ""
+            };
+            var statusLabel = p.Status switch
+            {
+                Earn_Learn.Enums.StatusPrijave.Prijavljeno => "Prijavljeno",
+                Earn_Learn.Enums.StatusPrijave.NaCekanju => "Čeka odluku",
+                Earn_Learn.Enums.StatusPrijave.Rijeseno => "Riješeno",
+                _ => ""
+            };
+
+            <div class="pr-row">
+                <div>
+                    <div class="pr-naslov">@p.Naslov</div>
+                    <div class="pr-opis">@p.Opis</div>
+                    <span class="status-badge @statusClass">@statusLabel</span>
+                </div>
+
+                <div class="pr-actions">
+                    @if (p.RecenzijaId.HasValue)
+                    {
+                        <a asp-controller="Recenzijas" asp-action="Details" asp-route-id="@p.RecenzijaId"
+                           class="btn-posj">Posjeti recenziju</a>
+                    }
+                    else if (!string.IsNullOrEmpty(p.PrijavljeniTutorId))
+                    {
+                        <a asp-controller="Tutor" asp-action="Profil" asp-route-id="@p.PrijavljeniTutorId"
+                           class="btn-posj">Posjeti korisnika</a>
+                    }
+                    <form method="post" asp-action="ObrisiPrijavu" asp-controller="SystemManager">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@p.Id" />
+                        <button type="submit" class="btn-obrisi"
+                                onclick="return confirm('Obrisati ovu prijavu?')">
+                            Obriši
+                        </button>
+                    </form>
+                </div>
+
+                <div class="pr-datum">
+                    @p.DatumPrijave.ToString("dd MMMM yyyy")
+                </div>
+            </div>
+        }
+    }
+</div>

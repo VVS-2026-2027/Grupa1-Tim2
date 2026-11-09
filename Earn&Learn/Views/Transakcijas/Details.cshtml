@@ -1,0 +1,182 @@
+﻿@model Earn_Learn.Models.Termin
+@using Earn_Learn.Enums
+
+@{
+    ViewData["Title"] = "Detalji termina";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+
+    var mjeseci = new[] { "", "januar", "februar", "mart", "april", "maj", "juni",
+                          "juli", "august", "septembar", "oktobar", "novembar", "decembar" };
+    var datum = Model.datumIVrijeme;
+    var datumBos = $"{datum.Day}. {mjeseci[datum.Month]} {datum.Year}. u {datum.ToString("HH:mm")}";
+    var tipTekst = Model.tipInstrukcija == TipInstrukcija.Uzivo ? "Uživo" : "Online";
+}
+
+<style>
+    .detalji-wrapper {
+        max-width: 700px;
+        margin: 60px auto;
+        padding: 0 24px;
+    }
+
+    .detalji-kartica {
+        background: #fff;
+        border: 1px solid #eee;
+        border-radius: 14px;
+        padding: 36px 40px;
+        box-shadow: 0 2px 16px rgba(0,0,0,0.06);
+    }
+
+    .detalji-naslov {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin-bottom: 4px;
+    }
+
+    .detalji-podnaslov {
+        font-size: 0.9rem;
+        color: #aaa;
+        margin-bottom: 30px;
+    }
+
+    .detalji-red {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 0;
+        border-bottom: 1px solid #f5f5f5;
+    }
+
+        .detalji-red:last-of-type {
+            border-bottom: none;
+        }
+
+    .detalji-label {
+        font-size: 0.85rem;
+        font-weight: 700;
+        color: #888;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .detalji-vrijednost {
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: #0d2d45;
+        text-align: right;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        text-transform: uppercase;
+    }
+
+    .status-Slobodan {
+        background: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-Rezervisan {
+        background: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .status-Potvrdjen {
+        background: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status-Odrzan {
+        background: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .status-Otkazan {
+        background: #ffebee;
+        color: #c62828;
+    }
+
+    .tip-badge {
+        display: inline-block;
+        padding: 5px 14px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 800;
+        background: #e8f0fe;
+        color: #1a56db;
+    }
+
+    .detalji-akcije {
+        margin-top: 28px;
+        display: flex;
+        gap: 12px;
+    }
+
+    .btn-nazad {
+        display: inline-block;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-decoration: none;
+        border: 2px solid #0d2d45;
+        color: #0d2d45;
+        transition: all 0.2s;
+    }
+
+        .btn-nazad:hover {
+            background: #0d2d45;
+            color: #fff;
+        }
+
+    .cijena-tekst {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #5bc400;
+    }
+</style>
+
+<div class="detalji-wrapper">
+    <div class="detalji-kartica">
+        <div class="detalji-naslov">Detalji termina</div>
+        <div class="detalji-podnaslov">Pregled informacija o terminu</div>
+
+        <div class="detalji-red">
+            <span class="detalji-label">Datum i vrijeme</span>
+            <span class="detalji-vrijednost">@datumBos</span>
+        </div>
+
+        <div class="detalji-red">
+            <span class="detalji-label">Tip instrukcija</span>
+            <span class="tip-badge">@tipTekst</span>
+        </div>
+
+        <div class="detalji-red">
+            <span class="detalji-label">Status</span>
+            <span class="status-badge status-@Model.status.ToString()">@Model.status.ToString()</span>
+        </div>
+
+        <div class="detalji-red">
+            <span class="detalji-label">Cijena</span>
+            <span class="cijena-tekst">@Model.cijena KM / h</span>
+        </div>
+
+        <div class="detalji-red">
+            <span class="detalji-label">Student</span>
+            <span class="detalji-vrijednost">
+                @(string.IsNullOrEmpty(Model.idStudenta) ? "Slobodan termin" : Model.idStudenta)
+            </span>
+        </div>
+    </div>
+
+    <div class="detalji-akcije">
+        <a class="btn-nazad" asp-controller="Tutor" asp-action="MojiCasovi">
+            ← Nazad na moje časove
+        </a>
+    </div>
+</div>

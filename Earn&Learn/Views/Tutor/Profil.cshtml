@@ -1,0 +1,305 @@
+﻿@model Earn_Learn.Models.TutorProfilViewModel
+@inject Microsoft.AspNetCore.Identity.UserManager<Earn_Learn.Models.Korisnik> UserManager
+
+@{
+    ViewData["Title"] = $"{Model.Tutor.Ime} {Model.Tutor.Prezime} – Profil";
+    var trenutniKorisnik = await UserManager.GetUserAsync(User);
+    bool jeAdmin = trenutniKorisnik?.Uloga == Earn_Learn.Enums.Uloga.SystemManager;
+    bool jeStudent = trenutniKorisnik?.Uloga == Earn_Learn.Enums.Uloga.Student;
+}
+
+@* ── DODAJ OVO NA VRH Tutor/Profil.cshtml (ispod @{ ... } bloka) ──
+   Popup se prikazuje kada student nema dovoljno novca pri rezervaciji s profila tutora *@
+
+@if (TempData["GreskaNovcenik"] != null)
+{
+    <div id="popupNovcenik" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 9999;
+        display: flex; align-items: center; justify-content: center;">
+        <div style="
+            background: #fff; border-radius: 14px; padding: 36px 32px;
+            max-width: 420px; width: 90%; text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.18);">
+            <div style="font-size: 48px; margin-bottom: 12px;">💸</div>
+            <div style="font-size: 1.2rem; font-weight: 800; color: #c00; margin-bottom: 10px;">
+                Nema dovoljno sredstava
+            </div>
+            <div style="font-size: 0.95rem; color: #555; margin-bottom: 24px; line-height: 1.5;">
+                @TempData["GreskaNovcenik"]
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <a asp-controller="Student" asp-action="Novcanik"
+                   style="background: #5bc400; color: #fff; padding: 10px 22px;
+                    border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 0.9rem;">
+                    💳 Uplati novac
+                </a>
+                <button onclick="document.getElementById('popupNovcenik').style.display='none'"
+                        style="background: #f0f0f0; color: #333; padding: 10px 22px;
+                    border-radius: 8px; font-weight: 700; border: none;
+                    cursor: pointer; font-size: 0.9rem;">
+                    Zatvori
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+
+<!-- HERO SEKCIJA -->
+<div style="background:#0d1b2a; color:white; padding: 48px 0 32px;">
+    <div class="container" style="max-width:860px; margin:auto; padding:0 24px;">
+
+        @if (TempData["Uspjeh"] != null)
+        {
+            <div class="alert alert-success">@TempData["Uspjeh"]</div>
+        }
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Greska"]</div>
+        }
+        @if (TempData["Broke"] != null)
+        {
+            <div id="brokeToast" style="
+                position:fixed; bottom:28px; right:28px; z-index:9999;
+                background:#7c3aed; color:#fff;
+                border-radius:14px; padding:18px 24px;
+                font-weight:700; font-size:1rem;
+                box-shadow:0 6px 28px rgba(0,0,0,.35);
+                display:flex; align-items:center; gap:14px;
+                max-width:380px;
+                animation: brokeSlideIn .3s ease;">
+                <span style="font-size:26px">💸</span>
+                <span>@TempData["Broke"]</span>
+                <button onclick="document.getElementById('brokeToast').remove()"
+                        style="background:none;border:none;color:#fff;font-size:20px;cursor:pointer;margin-left:auto;line-height:1;">
+                    ✕
+                </button>
+            </div>
+            <style>
+                        @@keyframes brokeSlideIn {
+                            from {
+                                transform: translateX(80px);
+                                opacity: 0;
+                            }
+
+                            to {
+                                transform: translateX(0);
+                                opacity: 1;
+                            }
+                        }
+            </style>
+            <script>
+                        setTimeout(function () {
+                            var t = document.getElementById('brokeToast');
+                            if (t) { t.style.transition = 'opacity .5s'; t.style.opacity = '0'; setTimeout(function () { t.remove(); }, 500); }
+                        }, 5000);
+            </script>
+        }
+
+        <!-- IME I OCJENA -->
+        <div style="display:flex; align-items:center; gap:16px; margin-bottom:8px;">
+            <div style="width:72px;height:72px;border-radius:50%;background:#1e3a5f;display:flex;align-items:center;justify-content:center;">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="#7a9cc0">
+                    <path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z" />
+                </svg>
+            </div>
+            <div>
+                <h1 style="margin:0; font-size:2rem; font-weight:700;">@Model.Tutor.Ime @Model.Tutor.Prezime</h1>
+                <div style="display:flex; align-items:center; gap:10px; margin-top:4px;">
+                    <span style="color:#7a9cc0; font-weight:600;">Tutor</span>
+                    <span style="color:#f5c518; font-size:1.1rem;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span>@(i <= Math.Round(Model.ProsjecnaOcjena) ? "★" : "☆")</span>
+                        }
+                    </span>
+                    <span style="color:#aaa; font-size:0.9rem;">(@Model.UkupnoRecenzija ocjena)</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- PREDMETI -->
+        <div style="margin-top:28px;">
+            <h3 style="color:#4caf8a; letter-spacing:2px; font-size:0.85rem; text-transform:uppercase; margin-bottom:10px;">Predmeti</h3>
+            @foreach (var predmet in Model.Predmeti.Take(3))
+            {
+                <p style="margin:4px 0; font-weight:600; letter-spacing:1px; font-size:0.9rem; text-transform:uppercase;">@predmet.naziv</p>
+            }
+            @if (Model.Predmeti.Count > 3)
+            {
+                <p style="color:#4caf8a; cursor:pointer; font-size:0.85rem;"
+                   onclick="document.getElementById('ostaliPredmeti').style.display='block'; this.style.display='none'">
+                    Pogledaj više (@(Model.Predmeti.Count - 3))
+                </p>
+                <div id="ostaliPredmeti" style="display:none;">
+                    @foreach (var predmet in Model.Predmeti.Skip(3))
+                    {
+                        <p style="margin:4px 0; font-weight:600; letter-spacing:1px; font-size:0.9rem; text-transform:uppercase;">@predmet.naziv</p>
+                    }
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN: OBRIŠI PROFIL BOX -->
+@if (jeAdmin)
+{
+    <div style="background:#ddeeff; padding:32px 0;">
+        <div class="container" style="max-width:620px; margin:auto; padding:0 24px; text-align:center;">
+            <h2 style="font-weight:800; color:#0d2d45; margin-bottom:8px;">Obriši profil</h2>
+            <p style="color:#555; margin-bottom:20px;">Trajno ukloni profil ovog korisnika iz baze podataka.</p>
+            <form asp-controller="SystemManager" asp-action="ObrisiKorisnika" method="post"
+                  onsubmit="return confirm('Jesi li siguran da želiš obrisati korisnika @Model.Tutor.Ime @Model.Tutor.Prezime? Ova akcija je nepovratna.')">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Tutor.Id" />
+                <button type="submit"
+                        style="background:#0d2d45; color:#fff; border:none; border-radius:20px; padding:10px 32px; font-weight:800; font-size:.95rem; cursor:pointer;">
+                    Obriši
+                </button>
+            </form>
+        </div>
+    </div>
+}
+
+<!-- REZERVACIJA TERMINA (samo ako nije admin) -->
+@if (!jeAdmin)
+{
+    <div style="background:#e8f5f0; padding:48px 0;">
+        <div class="container" style="max-width:620px; margin:auto; padding:0 24px; text-align:center;">
+            <h2 style="font-weight:700; margin-bottom:8px;">Rezerviši svoj termin</h2>
+            <p style="color:#555; font-size:1.1rem; margin-bottom:4px;">
+                Cijena: <strong>@Model.Tutor.CijenaPoSatu KM / h</strong>
+            </p>
+            <p style="color:#777; margin-bottom:28px;">Odaberite željeni slobodan termin:</p>
+
+            @if (Model.DostupniTermini != null && Model.DostupniTermini.Any())
+            {
+                @foreach (var t in Model.DostupniTermini)
+                {
+                    // Pokušaj dohvatiti naziv predmeta iz ViewBag
+                    var predmetNaziv = (ViewBag.TerminPredmeti as Dictionary<int, string>)
+                                        ?.GetValueOrDefault(t.id, null);
+
+                    <div style="background:#fff; border-radius:10px; padding:16px 20px;
+                        margin-bottom:12px; display:flex; justify-content:space-between;
+                        align-items:center; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                        <div style="text-align:left;">
+                            <strong style="font-size:1rem; color:#0d2d45;">
+                                @t.datumIVrijeme.ToString("dd.MM.yyyy. HH:mm")
+                            </strong>
+                            @if (!string.IsNullOrEmpty(predmetNaziv))
+                            {
+                                <br /><span style="color:#444; font-size:0.9rem; font-weight:600;">
+                                @predmetNaziv
+                            </span>
+                        }
+                        <br /><span style="color:#2e7d00; font-size:0.85rem; font-weight:700;">
+                        @t.cijena.ToString("0.00") KM/h
+                    </span>
+                </div>
+                <a asp-controller="Student" asp-action="RezervisiTermin"
+                   asp-route-id="@t.id"
+                   style="background:#4caf8a; color:white; padding:10px 24px;
+                    border-radius:8px; font-weight:700; text-decoration:none;
+                    font-size:0.9rem; white-space:nowrap;">
+                    Rezerviši
+                </a>
+            </div>
+        }
+    }
+            else
+    {
+        <p style="color:#888;">Nema dostupnih slobodnih termina.</p>
+    }
+</div>
+</div>
+}
+
+<!-- PRIJAVI TUTORA (samo za studente) -->
+@if (jeStudent)
+{
+    <div style="background:#fff8f0; padding:32px 0; border-top:1px solid #ffe0c0;">
+        <div class="container" style="max-width:620px; margin:auto; padding:0 24px; text-align:center;">
+            <button onclick="document.getElementById('prijavaForm').style.display=document.getElementById('prijavaForm').style.display==='none'?'block':'none'"
+                    style="background:transparent; border:2px solid #e55; color:#e55; border-radius:20px; padding:8px 24px; font-weight:700; cursor:pointer; font-size:.9rem;">
+                ⚠ Prijavi tutora
+            </button>
+            <div id="prijavaForm" style="display:none; margin-top:20px; text-align:left;">
+                <form asp-controller="Student" asp-action="PrijaviTutora" method="post">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tutorId" value="@Model.Tutor.Id" />
+                    <div style="margin-bottom:12px;">
+                        <label style="font-weight:700; font-size:.85rem; color:#555;">Naslov prijave</label>
+                        <input type="text" name="naslov" required maxlength="100"
+                               style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-top:4px; box-sizing:border-box;" />
+                    </div>
+                    <div style="margin-bottom:16px;">
+                        <label style="font-weight:700; font-size:.85rem; color:#555;">Opis</label>
+                        <textarea name="opis" rows="3" required maxlength="500"
+                                  style="width:100%; padding:10px; border:1px solid #ddd; border-radius:8px; margin-top:4px; resize:none; box-sizing:border-box;"></textarea>
+                    </div>
+                    <button type="submit"
+                            style="background:#e55; color:#fff; border:none; border-radius:20px; padding:10px 28px; font-weight:700; cursor:pointer;">
+                        Pošalji prijavu
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<!-- RECENZIJE -->
+<div style="background:#f5f5f5; padding:48px 0;">
+    <div class="container" style="max-width:800px; margin:auto; padding:0 24px; text-align:center;">
+
+        @if (Model.UkupnoRecenzija > 0)
+        {
+            <div style="display:flex; gap:40px; justify-content:center; margin-bottom:40px; flex-wrap:wrap;">
+                <div>
+                    <div style="font-size:3rem; font-weight:700;">@Model.ProsjecnaOcjena.ToString("F1")</div>
+                    <div style="color:#555;">@Model.Tutor.Ime @Model.Tutor.Prezime</div>
+                </div>
+                <div>
+                    <div style="font-size:3rem; color:#f5c518;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span>@(i <= Math.Round(Model.ProsjecnaOcjena) ? "★" : "☆")</span>
+                        }
+                    </div>
+                    <div style="font-size:1rem; color:#555;">Prosječna ocjena</div>
+                </div>
+                <div>
+                    <div style="font-size:3rem; font-weight:700;">@Model.UkupnoRecenzija</div>
+                    <div style="color:#555;">Ukupno ocjena</div>
+                </div>
+            </div>
+        }
+
+        @if (Model.Recenzije.Any())
+        {
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:24px;">
+                @foreach (var rec in Model.Recenzije.Take(3))
+                {
+                    <div style="background:white; border-radius:12px; padding:20px; text-align:left;">
+                        <p style="color:#333; margin-bottom:16px;">@rec.Recenzija.komentar</p>
+                        <div>
+                            <strong>@rec.ImeStudenta</strong>
+                            <br /><small style="color:#888;">Student</small>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+
+        <div style="background:white; border-radius:12px; padding:32px; margin-top:16px;">
+            <div style="font-size:2.5rem; margin-bottom:8px;">💬</div>
+            <h3 style="font-weight:700; margin-bottom:4px;">Komentari studenata</h3>
+            <a asp-controller="Tutor" asp-action="Recenzije" asp-route-id="@Model.Tutor.Id"
+               style="color:#333; text-decoration:none; font-size:0.95rem;">
+                → Pogledaj recenzije
+            </a>
+        </div>
+    </div>
+</div>

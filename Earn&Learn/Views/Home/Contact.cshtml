@@ -1,0 +1,417 @@
+﻿@{
+    ViewData["Title"] = "Kontakt";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* ── HERO ── */
+    .kt-hero {
+        background: #0d2d45;
+        padding: 80px 20px 100px;
+        text-align: center;
+        margin: 0 30px 0;
+        border-radius: 0 0 18px 18px;
+        color: #fff;
+    }
+
+        .kt-hero h2 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #a0b4c8;
+            margin-bottom: 8px;
+            letter-spacing: .03em;
+        }
+
+        .kt-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin: 0;
+            line-height: 1.2;
+        }
+
+    /* ── FORMA KARTICA ── */
+    .kt-cards {
+        display: flex;
+        gap: 20px;
+        max-width: 820px;
+        margin: 30px auto 0;
+        padding: 0 20px;
+        position: relative;
+        z-index: 2;
+    }
+
+    .kt-card {
+        flex: 1;
+        border-radius: 18px;
+        padding: 36px 30px 28px;
+        display: flex;
+        flex-direction: column;
+    }
+
+        .kt-card.forma {
+            background: #dce6ef;
+        }
+
+        .kt-card.podaci {
+            background: #5bc400;
+            color: #fff;
+            justify-content: space-between;
+            min-height: 260px;
+        }
+
+        .kt-card .card-label {
+            font-weight: 800;
+            font-size: .85rem;
+            letter-spacing: .12em;
+            text-transform: uppercase;
+            opacity: .85;
+            margin-top: auto;
+        }
+
+        /* ── FORMA ELEMENTI ── */
+        .kt-card.forma h3 {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 4px;
+        }
+
+        .kt-card.forma p.podnaslov {
+            color: #6b7c93;
+            font-size: .9rem;
+            margin-bottom: 22px;
+        }
+
+    .forma-grupa {
+        margin-bottom: 14px;
+    }
+
+        .forma-grupa label {
+            display: block;
+            font-size: .82rem;
+            color: #4a5568;
+            margin-bottom: 4px;
+            font-weight: 600;
+        }
+
+        .forma-grupa input,
+        .forma-grupa textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1.5px solid #c8d6e5;
+            border-radius: 8px;
+            font-size: .95rem;
+            background: #fff;
+            color: #0d2d45;
+            box-sizing: border-box;
+            transition: border-color .2s;
+            font-family: inherit;
+        }
+
+            .forma-grupa input:focus,
+            .forma-grupa textarea:focus {
+                outline: none;
+                border-color: #5bc400;
+            }
+
+        .forma-grupa textarea {
+            resize: vertical;
+        }
+
+    .btn-posalji {
+        width: 100%;
+        padding: 12px;
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        font-size: 1rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity .2s, transform .15s;
+        margin-top: 6px;
+        font-family: inherit;
+    }
+
+        .btn-posalji:hover {
+            opacity: .88;
+            transform: translateY(-2px);
+        }
+
+    /* ── KONTAKT PODACI KARTICA ── */
+    .kt-card.podaci h3 {
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #fff;
+        margin-bottom: 20px;
+    }
+
+    .kt-card.podaci .podaci-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        margin-bottom: 16px;
+    }
+
+        .kt-card.podaci .podaci-item i {
+            font-size: 1.1rem;
+            margin-top: 2px;
+        }
+
+        .kt-card.podaci .podaci-item span {
+            font-size: .93rem;
+            line-height: 1.5;
+            opacity: .93;
+        }
+
+    /* ── FAQ ── */
+    .kt-faq {
+        background: #b0c8d8;
+        margin: 40px 30px 0;
+        border-radius: 18px;
+        padding: 50px 40px;
+    }
+
+        .kt-faq h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+    .faq-lista {
+        max-width: 620px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .faq-item {
+        border-radius: 10px;
+        overflow: hidden;
+        background: #fff;
+    }
+
+    .faq-pitanje {
+        width: 100%;
+        background: transparent;
+        border: none;
+        color: #0d2d45;
+        font-size: .95rem;
+        font-weight: 700;
+        padding: 16px 20px;
+        text-align: left;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        font-family: inherit;
+        transition: background .2s;
+    }
+
+        .faq-pitanje:hover {
+            background: #f0f4f8;
+        }
+
+    .faq-ikona {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: #5bc400;
+        transition: transform .2s;
+        min-width: 20px;
+        text-align: center;
+    }
+
+    .faq-odgovor {
+        display: none;
+        padding: 0 20px 16px 20px;
+        color: #4a5568;
+        font-size: .9rem;
+        line-height: 1.6;
+    }
+
+        .faq-odgovor.aktivan {
+            display: block;
+        }
+
+    /* ── CTA ── */
+    .kt-cta {
+        text-align: center;
+        padding: 60px 20px 50px;
+    }
+
+        .kt-cta h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 10px;
+        }
+
+        .kt-cta p {
+            color: #888;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0;
+        }
+
+    /* ── ALERTS ── */
+    .alert-uspjeh {
+        background: #e8f5e9;
+        border: 1px solid #5bc400;
+        color: #2e7d32;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        font-size: .93rem;
+    }
+
+    .alert-greska {
+        background: #fdecea;
+        border: 1px solid #e53935;
+        color: #c62828;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        font-size: .93rem;
+    }
+
+    /* ── RESPONSIVE ── */
+    @@media (max-width: 640px) {
+        .kt-cards {
+            flex-direction: column;
+        }
+
+        .kt-hero, .kt-faq {
+            margin: 0 10px;
+            padding: 50px 20px 70px;
+        }
+
+        .kt-faq {
+            padding: 30px 20px;
+        }
+    }
+</style>
+
+<!-- HERO -->
+<section class="kt-hero">
+    <h2>Podrška</h2>
+    <h1>Trebate pomoć?<br>Tu smo za vas.</h1>
+</section>
+
+<!-- FORMA + PODACI -->
+<div class="kt-cards">
+    <!-- Forma -->
+    <div class="kt-card forma">
+        <h3>Kontaktirajte nas</h3>
+        <p class="podnaslov">Popunite formu za podršku</p>
+
+        @if (!string.IsNullOrEmpty(ViewBag.Uspjeh as string))
+        {
+            <div class="alert-uspjeh">@ViewBag.Uspjeh</div>
+        }
+        @if (!string.IsNullOrEmpty(ViewBag.Greska as string))
+        {
+            <div class="alert-greska">@ViewBag.Greska</div>
+        }
+
+        <form method="post" action="/Home/Contact">
+            @Html.AntiForgeryToken()
+            <div class="forma-grupa">
+                <label for="ime">Ime</label>
+                <input type="text" id="ime" name="ime" placeholder="Ime Prezime" required />
+            </div>
+            <div class="forma-grupa">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="tvojmail@etf.unsa.ba" required />
+            </div>
+            <div class="forma-grupa">
+                <label for="poruka">Poruka</label>
+                <textarea id="poruka" name="poruka" placeholder="Tvoja poruka..." rows="5" required></textarea>
+            </div>
+            <button type="submit" class="btn-posalji">Pošalji</button>
+        </form>
+    </div>
+
+    <!-- Kontakt podaci -->
+    <div class="kt-card podaci">
+        <div>
+            <h3>Kontakt Podaci</h3>
+            <div class="podaci-item">
+                <i class="bi bi-geo-alt-fill"></i>
+                <span>Zmaja od Bosne bb, Sarajevo</span>
+            </div>
+            <div class="podaci-item">
+                <i class="bi bi-envelope-fill"></i>
+                <span>support@earnandlearn.ba</span>
+            </div>
+            <div class="podaci-item">
+                <i class="bi bi-clock-fill"></i>
+                <span>Pon–Pet, 09:00–17:00</span>
+            </div>
+        </div>
+        <span class="card-label">Kontakt</span>
+    </div>
+</div>
+
+<!-- FAQ -->
+<section class="kt-faq">
+    <h2>Česta pitanja</h2>
+    <div class="faq-lista">
+        <div class="faq-item">
+            <button class="faq-pitanje" onclick="toggleFaq(this)">
+                Kako mogu zakazati instrukcije?
+                <span class="faq-ikona">+</span>
+            </button>
+            <div class="faq-odgovor">
+                Nakon registracije, pronađite tutora u listi i kliknite na "Zakaži termin". Odaberite slobodan termin i potvrdite rezervaciju.
+            </div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-pitanje" onclick="toggleFaq(this)">
+                Što učiniti ako naidem na tehnički problem?
+                <span class="faq-ikona">+</span>
+            </button>
+            <div class="faq-odgovor">
+                Popunite kontakt formu ili nas kontaktirajte direktno putem emaila. Naš tim odgovara u roku od 24 sata.
+            </div>
+        </div>
+        <div class="faq-item">
+            <button class="faq-pitanje" onclick="toggleFaq(this)">
+                Koje je radno vrijeme podrške?
+                <span class="faq-ikona">+</span>
+            </button>
+            <div class="faq-odgovor">
+                Naš tim za podršku dostupan je od ponedjeljka do petka, od 09:00 do 17:00 sati.
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="kt-cta">
+    <h2>Imate dodatnih pitanja?</h2>
+    <p>Pogledajte često postavljena pitanja ili nas kontaktirajte direktno.</p>
+</section>
+
+<script>
+    function toggleFaq(btn) {
+        var odgovor = btn.nextElementSibling;
+        var ikona = btn.querySelector('.faq-ikona');
+        var jeOtvoren = odgovor.classList.contains('aktivan');
+
+        document.querySelectorAll('.faq-odgovor').forEach(function (el) {
+            el.classList.remove('aktivan');
+        });
+        document.querySelectorAll('.faq-ikona').forEach(function (el) {
+            el.textContent = '+';
+        });
+
+        if (!jeOtvoren) {
+            odgovor.classList.add('aktivan');
+            ikona.textContent = '×';
+        }
+    }
+</script>
