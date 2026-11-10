@@ -1,0 +1,48 @@
+﻿@model Earn_Learn.Models.Recenzija
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>Recenzija</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="idStudenta" class="control-label"></label>
+                <input asp-for="idStudenta" class="form-control" />
+                <span asp-validation-for="idStudenta" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="idTutora" class="control-label"></label>
+                <input asp-for="idTutora" class="form-control" />
+                <span asp-validation-for="idTutora" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ocjena" class="control-label"></label>
+                <input asp-for="ocjena" class="form-control" />
+                <span asp-validation-for="ocjena" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="komentar" class="control-label"></label>
+                <input asp-for="komentar" class="form-control" />
+                <span asp-validation-for="komentar" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

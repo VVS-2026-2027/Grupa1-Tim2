@@ -1,0 +1,80 @@
+﻿@model Earn_Learn.Models.Termin
+@using Earn_Learn.Enums
+@{
+    ViewData["Title"] = "Rezerviši termin";
+    var tutor = ViewBag.Tutor as Earn_Learn.Models.Korisnik;
+    var predmet = ViewBag.Predmet as Earn_Learn.Models.Predmet;
+}
+
+@* POPUP: Nema dovoljno sredstava na novčaniku *@
+@if (TempData["GreskaNovcenik"] != null)
+{
+    <div id="popupNovcenik" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.5); z-index: 9999;
+        display: flex; align-items: center; justify-content: center;">
+        <div style="
+            background: #fff; border-radius: 14px; padding: 36px 32px;
+            max-width: 420px; width: 90%; text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.18);">
+            <div style="font-size: 48px; margin-bottom: 12px;">💸</div>
+            <div style="font-size: 1.2rem; font-weight: 800; color: #c00; margin-bottom: 10px;">
+                Nema dovoljno sredstava
+            </div>
+            <div style="font-size: 0.95rem; color: #555; margin-bottom: 24px; line-height: 1.5;">
+                @TempData["GreskaNovcenik"]
+            </div>
+            <div style="display: flex; gap: 10px; justify-content: center;">
+                <a asp-controller="Student" asp-action="Novcanik"
+                   style="background: #5bc400; color: #fff; padding: 10px 22px;
+                    border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 0.9rem;">
+                    💳 Uplati novac
+                </a>
+                <button onclick="document.getElementById('popupNovcenik').style.display='none'"
+                        style="background: #f0f0f0; color: #333; padding: 10px 22px;
+                    border-radius: 8px; font-weight: 700; border: none;
+                    cursor: pointer; font-size: 0.9rem;">
+                    Zatvori
+                </button>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="container mt-5" style="max-width:600px;">
+    <h4 class="fw-bold mb-4">Rezerviši termin</h4>
+
+    <div style="background:#f4f6fa; border-radius:12px; padding:20px; margin-bottom:24px;">
+        <p><strong>Tutor:</strong> @tutor?.Ime @tutor?.Prezime</p>
+        <p><strong>Predmet:</strong> @(predmet?.naziv ?? "—")</p>
+        <p><strong>Datum i vrijeme:</strong> @Model.datumIVrijeme.ToString("dd.MM.yyyy. HH:mm")</p>
+        <p><strong>Cijena:</strong> @Model.cijena KM/h</p>
+    </div>
+
+    <form asp-controller="Termins" asp-action="RezervisiTermin"
+          asp-route-id="@Model.id" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="mb-4">
+            <label class="form-label fw-semibold">Način izvođenja:</label>
+            <div class="d-flex gap-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="radio"
+                           name="tipInstrukcija" value="Online"
+                           id="tipOnline" checked />
+                    <label class="form-check-label" for="tipOnline">Online</label>
+                </div>
+                <div class="form-check">
+                    <input class="form-check-input" type="radio"
+                           name="tipInstrukcija" value="Uzivo"
+                           id="tipUzivo" />
+                    <label class="form-check-label" for="tipUzivo">Uživo</label>
+                </div>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-success w-100 fw-bold">
+            Potvrdi rezervaciju
+        </button>
+    </form>
+</div>

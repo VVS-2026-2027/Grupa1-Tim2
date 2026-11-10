@@ -1,0 +1,899 @@
+﻿@model Earn_Learn.Models.ProfilViewModel
+@{
+    ViewData["Title"] = "Moj profil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .profil-wrapper {
+        max-width: 800px;
+        margin: 60px auto;
+        padding: 0 24px;
+    }
+
+    .profil-ime {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin-bottom: 4px;
+    }
+
+    .profil-uloga {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #888;
+        margin-bottom: 16px;
+    }
+
+    .profil-grid {
+        display: flex;
+        gap: 60px;
+        flex-wrap: wrap;
+    }
+
+    .profil-sekcija h4 {
+        font-size: .8rem;
+        font-weight: 800;
+        color: #5bc400;
+        letter-spacing: 1.5px;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+    }
+
+    .profil-row {
+        margin-bottom: 20px;
+    }
+
+        .profil-row .label {
+            font-size: .9rem;
+            font-weight: 700;
+            color: #0d2d45;
+            margin-bottom: 2px;
+        }
+
+        .profil-row .value {
+            font-size: .9rem;
+            color: #555;
+        }
+
+    /* Statistike */
+    .stat-row {
+        display: flex;
+        gap: 20px;
+        margin-bottom: 28px;
+        flex-wrap: wrap;
+    }
+
+    .stat-box {
+        background: #f7faf4;
+        border: 2px solid #e0f0d0;
+        border-radius: 12px;
+        padding: 16px 24px;
+        text-align: center;
+        min-width: 120px;
+    }
+
+        .stat-box .stat-broj {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0d2d45;
+        }
+
+        .stat-box .stat-naziv {
+            font-size: .78rem;
+            font-weight: 700;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+    /* Godina studija */
+    .godina-box {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+    }
+
+    .btn-edit-godina {
+        background: none;
+        border: 1px solid #5bc400;
+        color: #5bc400;
+        border-radius: 8px;
+        padding: 4px 12px;
+        font-size: .78rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-edit-godina:hover {
+            background: #5bc400;
+            color: #fff;
+        }
+
+    .godina-forma {
+        display: none;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    /* Cijena */
+    .cijena-box {
+        background: #f7faf4;
+        border: 2px solid #e0f0d0;
+        border-radius: 12px;
+        padding: 20px 24px;
+        margin-top: 8px;
+    }
+
+    .cijena-prikaz {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        flex-wrap: wrap;
+    }
+
+    .cijena-vrijednost {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: #0d2d45;
+    }
+
+    .btn-edit-cijena {
+        background: none;
+        border: 1px solid #5bc400;
+        color: #5bc400;
+        border-radius: 8px;
+        padding: 5px 14px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-edit-cijena:hover {
+            background: #5bc400;
+            color: #fff;
+        }
+
+    .cijena-forma {
+        display: none;
+        margin-top: 16px;
+        align-items: center;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+
+    .cijena-input, .godina-input {
+        padding: 8px 12px;
+        border: 2px solid #5bc400;
+        border-radius: 8px;
+        font-size: .95rem;
+        font-weight: 700;
+        color: #0d2d45;
+        outline: none;
+        font-family: inherit;
+    }
+
+    .cijena-input {
+        width: 130px;
+    }
+
+    .godina-input {
+        width: 110px;
+    }
+
+    .btn-spremi {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 18px;
+        font-size: .88rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: opacity .2s;
+        font-family: inherit;
+    }
+
+        .btn-spremi:hover {
+            opacity: .85;
+        }
+
+    .btn-odustani {
+        background: none;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 8px 14px;
+        font-size: .88rem;
+        color: #888;
+        cursor: pointer;
+        font-family: inherit;
+    }
+
+        .btn-odustani:hover {
+            background: #f5f5f5;
+        }
+
+    /* Predmeti sa dugmadima */
+    .predmet-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        gap: 10px;
+    }
+
+    .predmet-naziv {
+        font-size: .95rem;
+        font-weight: 700;
+        color: #0d2d45;
+    }
+
+    .btn-obrisi-predmet {
+        background: none;
+        border: 1px solid #e0e0e0;
+        color: #999;
+        border-radius: 6px;
+        padding: 3px 10px;
+        font-size: .78rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+        white-space: nowrap;
+    }
+
+        .btn-obrisi-predmet:hover {
+            background: #fef2f2;
+            border-color: #e53935;
+            color: #e53935;
+        }
+
+    .btn-dodaj-predmet {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        background: none;
+        border: 1.5px solid #5bc400;
+        color: #5bc400;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        margin-top: 8px;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-dodaj-predmet:hover {
+            background: #5bc400;
+            color: #fff;
+        }
+
+    /* Modal dodaj predmet */
+    .predmet-modal .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+
+    .predmet-modal .modal-header {
+        border-bottom: 2px solid #f0f0f0;
+        padding: 20px 24px 14px;
+    }
+
+    .predmet-modal .modal-title {
+        font-weight: 800;
+        color: #0d2d45;
+    }
+
+    .predmet-modal .modal-body {
+        padding: 20px 24px;
+    }
+
+    .predmet-modal select,
+    .predmet-modal input[type="file"] {
+        width: 100%;
+        padding: 10px 14px;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: .95rem;
+        font-family: inherit;
+        color: #0d2d45;
+        outline: none;
+        box-sizing: border-box;
+        background: #f9f9f9;
+    }
+
+    .predmet-modal label {
+        display: block;
+        font-size: .82rem;
+        font-weight: 700;
+        color: #555;
+        margin-bottom: 5px;
+        margin-top: 14px;
+    }
+
+    .btn-potvrdi-predmet {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 28px;
+        font-size: .95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-potvrdi-predmet:hover {
+            background: #4aab00;
+        }
+
+    /* Recenzije */
+    .recenzije-sekcija {
+        margin-top: 48px;
+    }
+
+        .recenzije-sekcija h4 {
+            font-size: .8rem;
+            font-weight: 800;
+            color: #5bc400;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 20px;
+        }
+
+    .recenzija-card {
+        background: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 12px;
+        padding: 18px 22px;
+        margin-bottom: 14px;
+    }
+
+        .recenzija-card .rec-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .recenzija-card .rec-autor {
+            font-weight: 700;
+            font-size: .92rem;
+            color: #0d2d45;
+        }
+
+        .recenzija-card .rec-ocjena {
+            font-size: .88rem;
+            color: #f59e0b;
+            font-weight: 700;
+        }
+
+        .recenzija-card .rec-datum {
+            font-size: .78rem;
+            color: #aaa;
+        }
+
+        .recenzija-card .rec-komentar {
+            font-size: .9rem;
+            color: #555;
+            line-height: 1.5;
+        }
+
+    .nema-recenzija {
+        color: #aaa;
+        font-size: .9rem;
+        font-style: italic;
+    }
+
+    /* Alerts */
+    .alert-success-profil {
+        padding: 12px 20px;
+        background: #e8f5e0;
+        color: #2e7d00;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .92rem;
+        margin-bottom: 24px;
+    }
+
+    .alert-error-profil {
+        padding: 12px 20px;
+        background: #fff0f0;
+        color: #c00;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .92rem;
+        margin-bottom: 24px;
+    }
+
+    /* Postani tutor */
+    .btn-postani-tutor {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .92rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        margin-bottom: 32px;
+        text-decoration: none;
+    }
+
+        .btn-postani-tutor:hover {
+            background: #4aab00;
+            color: #fff;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 14px rgba(91,196,0,.3);
+        }
+
+    .tutor-modal .modal-content {
+        border-radius: 16px;
+        border: none;
+        box-shadow: 0 20px 60px rgba(0,0,0,.15);
+    }
+
+    .tutor-modal .modal-header {
+        border-bottom: 2px solid #f0f0f0;
+        padding: 24px 28px 16px;
+    }
+
+    .tutor-modal .modal-title {
+        font-weight: 800;
+        color: #0d2d45;
+        font-size: 1.2rem;
+    }
+
+    .tutor-modal .modal-body {
+        padding: 24px 28px;
+    }
+
+    .tutor-modal .modal-footer {
+        border-top: 2px solid #f0f0f0;
+        padding: 16px 28px 24px;
+    }
+
+    .predmeti-lista {
+        max-height: 280px;
+        overflow-y: auto;
+        border: 2px solid #e8e8e8;
+        border-radius: 10px;
+        padding: 12px 16px;
+        background: #fafafa;
+    }
+
+        .predmeti-lista::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .predmeti-lista::-webkit-scrollbar-thumb {
+            background: #5bc400;
+            border-radius: 3px;
+        }
+
+        .predmeti-lista .form-check {
+            padding: 6px 0 6px 26px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+            .predmeti-lista .form-check:last-child {
+                border-bottom: none;
+            }
+
+        .predmeti-lista .form-check-input:checked {
+            background-color: #5bc400;
+            border-color: #5bc400;
+        }
+
+        .predmeti-lista .form-check-label {
+            font-size: .9rem;
+            font-weight: 600;
+            color: #0d2d45;
+            cursor: pointer;
+        }
+
+    .modal-section-label {
+        font-size: .8rem;
+        font-weight: 800;
+        color: #5bc400;
+        letter-spacing: 1.2px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+    }
+
+    .prilog-box {
+        border: 2px dashed #d0d0d0;
+        border-radius: 10px;
+        padding: 16px;
+        background: #fafafa;
+        transition: border-color .2s;
+    }
+
+        .prilog-box:hover {
+            border-color: #5bc400;
+        }
+
+    .btn-potvrdi {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 28px;
+        font-size: .95rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-potvrdi:hover {
+            background: #4aab00;
+            transform: translateY(-1px);
+        }
+
+    .btn-odustani-modal {
+        background: none;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 10px 22px;
+        font-size: .9rem;
+        font-weight: 600;
+        color: #888;
+        cursor: pointer;
+        transition: all .2s;
+        font-family: inherit;
+    }
+
+        .btn-odustani-modal:hover {
+            border-color: #bbb;
+            background: #f5f5f5;
+        }
+
+    .profil-footer {
+        margin-top: 60px;
+        color: #aaa;
+        font-size: .82rem;
+    }
+</style>
+
+<div class="profil-wrapper">
+    <div class="profil-ime">@Model.Ime @Model.Prezime</div>
+    <div class="profil-uloga">@Model.Uloga.ToString()</div>
+
+    @* ── STATISTIKE (skriveno za SystemManager) ── *@
+    @if (Model.Uloga != Earn_Learn.Enums.Uloga.SystemManager)
+    {
+        <div class="stat-row">
+            <div class="stat-box">
+                <div class="stat-broj">@Model.BrojCasova</div>
+                <div class="stat-naziv">Časova</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-broj">@Model.BrojRecenzija</div>
+                <div class="stat-naziv">Recenzija</div>
+            </div>
+        </div>
+    }
+
+    @* ── POSTANI TUTOR (netaknuto) ── *@
+    @if (Model.Uloga == Earn_Learn.Enums.Uloga.Student)
+    {
+        <button type="button" class="btn-postani-tutor"
+                data-bs-toggle="modal" data-bs-target="#postaniTutorModal">
+            🎓 Postani tutor
+        </button>
+
+        @if (TempData["TutorGreska"] != null)
+        {
+            <div class="alert-error-profil">✗ @TempData["TutorGreska"]</div>
+        }
+    }
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-success-profil">✓ @TempData["Uspjeh"]</div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert-error-profil">✗ @TempData["Greska"]</div>
+    }
+
+    <div class="profil-grid">
+        <div class="profil-sekcija">
+            <h4>Osnovni podaci</h4>
+
+            @* ── GODINA STUDIJA (skriveno za SystemManager) ── *@
+            @if (Model.Uloga != Earn_Learn.Enums.Uloga.SystemManager)
+            {
+                <div class="profil-row">
+                    <div class="label">Godina studija</div>
+                    <div class="godina-box">
+                        <span class="value" id="godinaVrijednost">
+                            @(Model.GodinaStudija.HasValue ? Model.GodinaStudija + ". godina" : "Nije postavljeno")
+                        </span>
+                        <button class="btn-edit-godina" id="btnEditGodina" onclick="toggleEditGodina()">✏ Uredi</button>
+                    </div>
+                    <div class="godina-forma" id="godinaForma">
+                        <form method="post" asp-action="UrediGodinuStudija" asp-controller="Profil"
+                              style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                            @Html.AntiForgeryToken()
+                            <select name="godinaStudija" class="godina-input">
+                                @for (int g = 1; g <= 6; g++)
+                                {
+                                    if (Model.GodinaStudija == g)
+                                    {
+                                        <option value="@g" selected>@g. godina</option>
+                                    }
+                                    else
+                                    {
+                                        <option value="@g">@g. godina</option>
+                                    }
+                                }
+                            </select>
+                            <button type="submit" class="btn-spremi">Spremi</button>
+                            <button type="button" class="btn-odustani" onclick="toggleEditGodina()">Odustani</button>
+                        </form>
+                    </div>
+                </div>
+            }
+
+            @if (Model.Uloga == Earn_Learn.Enums.Uloga.Student && Model.BrojIndeksa.HasValue)
+            {
+                <div class="profil-row">
+                    <div class="label">Broj indeksa</div>
+                    <div class="value">@Model.BrojIndeksa</div>
+                </div>
+            }
+
+            <div class="profil-row">
+                <div class="label">Email adresa</div>
+                <div class="value">@Model.Email</div>
+            </div>
+
+            @if (Model.Uloga == Earn_Learn.Enums.Uloga.Tutor)
+            {
+                @if (ViewBag.ProsjecnaOcjena != null)
+                {
+                    <div class="profil-row">
+                        <div class="label">Prosječna ocjena</div>
+                        <div class="value">⭐ @(((double)ViewBag.ProsjecnaOcjena).ToString("0.0"))</div>
+                    </div>
+                }
+
+                <div class="profil-row">
+                    <div class="label">Cijena po satu</div>
+                    <div class="cijena-box">
+                        <div class="cijena-prikaz">
+                            <span class="cijena-vrijednost">@(((double)ViewBag.CijenaPoSatu).ToString("0.00")) KM/h</span>
+                            <button class="btn-edit-cijena" onclick="toggleEditCijena()">✏ Uredi</button>
+                        </div>
+                        <div class="cijena-forma" id="cijenaForma">
+                            <form method="post" asp-action="UrediCijenu" asp-controller="Profil"
+                                  style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+                                @Html.AntiForgeryToken()
+                                <input type="number" name="cijenaPoSatu" class="cijena-input"
+                                       value="@((double)ViewBag.CijenaPoSatu)" min="0" step="0.5" required />
+                                <span style="font-size:.9rem; color:#888;">KM/h</span>
+                                <button type="submit" class="btn-spremi">Spremi</button>
+                                <button type="button" class="btn-odustani" onclick="toggleEditCijena()">Odustani</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+
+        @* ── PREDMETI (skriveno za SystemManager) ── *@
+        @if (Model.Uloga != Earn_Learn.Enums.Uloga.SystemManager)
+        {
+            <div class="profil-sekcija">
+                <h4>@(Model.Uloga == Earn_Learn.Enums.Uloga.Tutor ? "Predmeti koje predajem:" : "Predmeti od interesa:")</h4>
+
+                @if (Model.Uloga == Earn_Learn.Enums.Uloga.Tutor)
+                {
+                    @foreach (var p in Model.PredmetiObjekti)
+                    {
+                        <div class="predmet-row">
+                            <span class="predmet-naziv"><i class="bi bi-book text-muted me-2"></i>@p.naziv</span>
+                            <form method="post" asp-action="ObrisiPredmet" asp-controller="Profil" style="display:inline"
+                                  onsubmit="return confirm('Sigurno ukloniti predmet @p.naziv?')">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="predmetId" value="@p.id" />
+                                <button type="submit" class="btn-obrisi-predmet">✕ Ukloni</button>
+                            </form>
+                        </div>
+                    }
+                    <button type="button" class="btn-dodaj-predmet"
+                            data-bs-toggle="modal" data-bs-target="#dodajPredmetModal">
+                        + Dodaj predmet
+                    </button>
+                }
+                else
+                {
+                    @foreach (var p in Model.Predmeti)
+                    {
+                        <div class="predmet-naziv" style="margin-bottom:14px;">
+                            <i class="bi bi-book text-muted me-2"></i>@p
+                        </div>
+                    }
+                }
+            </div>
+        }
+    </div>
+
+    @* ── RECENZIJE (skriveno za SystemManager) ── *@
+    @if (Model.Uloga != Earn_Learn.Enums.Uloga.SystemManager)
+    {
+        <div class="recenzije-sekcija">
+            <h4>Prethodne recenzije (@Model.BrojRecenzija)</h4>
+            @if (Model.Recenzije != null && Model.Recenzije.Any())
+            {
+                @foreach (var rv in Model.Recenzije)
+                {
+                    <div class="recenzija-card">
+                        <div class="rec-header">
+                            <span class="rec-autor">@rv.ImeStudenta</span>
+                            <span class="rec-ocjena">
+                                @for (int i = 0; i < rv.Recenzija.ocjena; i++)
+                                {
+                                    <text>★</text>
+                                }
+                                @for (int i = rv.Recenzija.ocjena; i < 5; i++)
+                                {
+                                    <text>☆</text>
+                                }
+                                (@rv.Recenzija.ocjena/5)
+                            </span>
+                            <span class="rec-datum">@rv.Recenzija.datumRecenzije.ToString("dd.MM.yyyy")</span>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(rv.Recenzija.komentar))
+                        {
+                            <div class="rec-komentar">@rv.Recenzija.komentar</div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="nema-recenzija">Još nema recenzija.</div>
+            }
+        </div>
+    }
+
+    <div class="profil-footer">
+        &copy; 2026<br />Sva prava zadržana
+    </div>
+</div>
+
+@* ── MODAL: Postani tutor (netaknuto) ── *@
+@if (Model.Uloga == Earn_Learn.Enums.Uloga.Student)
+{
+    <div class="modal fade tutor-modal" id="postaniTutorModal" tabindex="-1"
+         aria-labelledby="postaniTutorLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="postaniTutorLabel">🎓 Postani tutor</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" asp-action="PostaniTutor" asp-controller="Profil" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <div class="modal-section-label">Predmeti koje želim podučavati</div>
+                        <div class="predmeti-lista mb-4">
+                            @foreach (var predmet in Model.SviPredmeti)
+                            {
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="odabraniPredmeti" value="@predmet.id"
+                                           id="predmet_@predmet.id" />
+                                    <label class="form-check-label" for="predmet_@predmet.id">@predmet.naziv</label>
+                                </div>
+                            }
+                        </div>
+                        <div class="modal-section-label">Prilog — ocjene iz predmeta</div>
+                        <div class="prilog-box">
+                            <input type="file" name="prilogOcjene"
+                                   class="form-control border-0 bg-transparent p-0"
+                                   accept=".jpg,.jpeg,.png,.pdf" />
+                            <small class="text-muted mt-2 d-block">JPG, PNG ili PDF, max 5MB</small>
+                        </div>
+                    </div>
+                    <div class="modal-footer gap-2">
+                        <button type="button" class="btn-odustani-modal" data-bs-dismiss="modal">Odustani</button>
+                        <button type="submit" class="btn-potvrdi">Potvrdi</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+@* ── MODAL: Dodaj predmet (samo tutor) ── *@
+@if (Model.Uloga == Earn_Learn.Enums.Uloga.Tutor)
+{
+    <div class="modal fade predmet-modal" id="dodajPredmetModal" tabindex="-1"
+         aria-labelledby="dodajPredmetLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="dodajPredmetLabel">+ Dodaj predmet</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="post" asp-action="DodajPredmet" asp-controller="Profil" enctype="multipart/form-data">
+                    @Html.AntiForgeryToken()
+                    <div class="modal-body">
+                        <label>Odaberi predmet</label>
+                        <select name="predmetId">
+                            @foreach (var predmet in Model.SviPredmeti.Where(p => !Model.PredmetiObjekti.Select(x => x.id).Contains(p.id)))
+                            {
+                                <option value="@predmet.id">@predmet.naziv</option>
+                            }
+                        </select>
+
+                        <label style="margin-top:16px;">Prilog — dokaz o položenom predmetu</label>
+                        <div class="prilog-box" style="margin-top:6px;">
+                            <input type="file" name="prilogPredmet" accept=".jpg,.jpeg,.png,.pdf"
+                                   style="width:100%; background:transparent; border:none;" />
+                            <small style="color:#888; font-size:.8rem; margin-top:6px; display:block;">JPG, PNG ili PDF, max 5MB</small>
+                        </div>
+                        <p style="color:#888; font-size:.82rem; margin-top:12px;">
+                            Zahtjev će biti poslan adminu na odobrenje. Predmet će biti dodan nakon verifikacije.
+                        </p>
+                    </div>
+                    <div class="modal-footer gap-2">
+                        <button type="button" class="btn-odustani-modal" data-bs-dismiss="modal">Odustani</button>
+                        <button type="submit" class="btn-potvrdi-predmet">Pošalji zahtjev</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<script>
+    function toggleEditCijena() {
+        var forma = document.getElementById('cijenaForma');
+        var prikaz = document.querySelector('.cijena-prikaz');
+        if (forma.style.display === 'flex') {
+            forma.style.display = 'none';
+            prikaz.style.display = 'flex';
+        } else {
+            forma.style.display = 'flex';
+            prikaz.style.display = 'none';
+            forma.querySelector('input').focus();
+        }
+    }
+
+    function toggleEditGodina() {
+        var forma = document.getElementById('godinaForma');
+        var prikaz = document.getElementById('godinaVrijednost');
+        var btn = document.getElementById('btnEditGodina');
+        if (forma.style.display === 'flex') {
+            forma.style.display = 'none';
+            prikaz.style.display = 'inline';
+            btn.style.display = 'inline-block';
+        } else {
+            forma.style.display = 'flex';
+            prikaz.style.display = 'none';
+            btn.style.display = 'none';
+        }
+    }
+</script>

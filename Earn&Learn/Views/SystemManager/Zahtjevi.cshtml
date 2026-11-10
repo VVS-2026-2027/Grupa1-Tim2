@@ -1,0 +1,68 @@
+﻿@{
+    ViewData["Title"] = "Administrator zahtjeva";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .zah-wrapper {
+        min-height: 60vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #dceef8;
+    }
+
+    .zah-inner {
+        text-align: center;
+        padding: 80px 40px;
+    }
+
+        .zah-inner h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #111;
+            margin-bottom: 10px;
+        }
+
+        .zah-inner p {
+            font-size: 1.1rem;
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+    .zah-btns {
+        display: flex;
+        gap: 16px;
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .zah-btn {
+        background: #0d2d45;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 14px 32px;
+        font-size: .95rem;
+        font-weight: 700;
+        text-decoration: none;
+        cursor: pointer;
+        transition: opacity .2s;
+    }
+
+        .zah-btn:hover {
+            opacity: .82;
+            color: #fff;
+        }
+</style>
+
+<div class="zah-wrapper">
+    <div class="zah-inner">
+        <h1>Administrator zahtjeva</h1>
+        <p>Pregled i upravljanje korisničkim zahtjevima.</p>
+        <div class="zah-btns">
+            <a asp-controller="SystemManager" asp-action="Prijave" class="zah-btn">Prijave</a>
+            <a asp-controller="SystemManager" asp-action="ZahtjeviZaVerifikaciju" class="zah-btn">Zahtjevi za verifikaciju</a>
+        </div>
+    </div>
+</div>

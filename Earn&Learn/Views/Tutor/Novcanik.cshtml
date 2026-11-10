@@ -1,0 +1,242 @@
+﻿@model IEnumerable<Earn_Learn.Models.Transakcija>
+@using Earn_Learn.Enums
+@{
+    ViewData["Title"] = "Novčanik";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    double stanje = ViewBag.StanjeRacuna ?? 0.0;
+    double ukupno = ViewBag.UkupnoZaradeno ?? 0.0;
+}
+
+<style>
+    * {
+        font-family: 'Nunito', sans-serif;
+    }
+
+    .nv-hero {
+        background: #0d2d45;
+        padding: 60px 20px 50px;
+        text-align: center;
+        color: #fff;
+    }
+
+        .nv-hero h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 6px;
+        }
+
+        .nv-hero p {
+            color: #a0b8c8;
+            font-size: 1rem;
+            margin: 0;
+        }
+
+    .nv-stats {
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        padding: 50px 20px 20px;
+        text-align: center;
+        flex-wrap: wrap;
+    }
+
+    .nv-stat .broj {
+        font-size: 3rem;
+        font-weight: 800;
+        color: #0d2d45;
+        line-height: 1;
+    }
+
+    .nv-stat .label {
+        font-size: .95rem;
+        color: #888;
+        margin-top: 6px;
+    }
+
+    .nv-wrap {
+        max-width: 700px;
+        margin: 0 auto 60px;
+        padding: 0 20px;
+    }
+
+    .sim-card {
+        background: linear-gradient(135deg, #0d2d45, #1a5276);
+        border-radius: 16px;
+        padding: 28px 28px 22px;
+        color: #fff;
+        margin-bottom: 32px;
+        position: relative;
+        overflow: hidden;
+    }
+
+        .sim-card::before {
+            content: '';
+            position: absolute;
+            top: -40px;
+            right: -40px;
+            width: 160px;
+            height: 160px;
+            background: rgba(255,255,255,.06);
+            border-radius: 50%;
+        }
+
+        .sim-card .chip {
+            width: 38px;
+            height: 28px;
+            background: linear-gradient(135deg, #f5c518, #e6a800);
+            border-radius: 5px;
+            margin-bottom: 22px;
+        }
+
+        .sim-card .card-broj {
+            font-size: 1.1rem;
+            letter-spacing: 4px;
+            font-weight: 600;
+            margin-bottom: 16px;
+            color: #c8dff0;
+        }
+
+        .sim-card .card-stanje {
+            font-size: 1.8rem;
+            font-weight: 800;
+        }
+
+        .sim-card .card-label {
+            font-size: .8rem;
+            color: #a0b8c8;
+            margin-top: 2px;
+        }
+
+    .sim-badge {
+        position: absolute;
+        top: 20px;
+        right: 24px;
+        background: rgba(91,196,0,.2);
+        color: #5bc400;
+        border-radius: 20px;
+        padding: 4px 12px;
+        font-size: .75rem;
+        font-weight: 800;
+    }
+
+    .nv-section-title {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin: 32px 0 12px;
+        padding-bottom: 6px;
+        border-bottom: 2px solid #f0f0f0;
+    }
+
+    .nv-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 12px 0;
+        border-bottom: 1px solid #f5f5f5;
+        gap: 12px;
+    }
+
+        .nv-row:last-child {
+            border-bottom: none;
+        }
+
+    .nv-iznos-plus {
+        font-size: 1rem;
+        font-weight: 800;
+        color: #2e7d32;
+    }
+
+    .nv-datum {
+        font-size: .82rem;
+        color: #aaa;
+    }
+
+    .nv-tip {
+        font-size: .82rem;
+        color: #555;
+        flex: 1;
+    }
+
+    .nv-empty {
+        text-align: center;
+        padding: 30px;
+        color: #aaa;
+        font-size: .95rem;
+    }
+
+    .alert-ok {
+        background: #e8f5e0;
+        color: #2e7d00;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .nv-info-box {
+        background: #f0f7ff;
+        border: 1.5px solid #c8dff0;
+        border-radius: 12px;
+        padding: 16px 20px;
+        font-size: .88rem;
+        color: #1565c0;
+        font-weight: 600;
+        margin-bottom: 24px;
+    }
+</style>
+
+<div class="nv-hero">
+    <h1>Novčanik</h1>
+    <p>Pregled zarada od instrukcija</p>
+</div>
+
+<div class="nv-stats">
+    <div class="nv-stat">
+        <div class="broj">@stanje.ToString("N2") KM</div>
+        <div class="label">Trenutno stanje</div>
+    </div>
+    <div class="nv-stat">
+        <div class="broj">@ukupno.ToString("N2") KM</div>
+        <div class="label">Ukupno zarađeno</div>
+    </div>
+</div>
+
+<div class="nv-wrap">
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-ok">✓ @TempData["Uspjeh"]</div>
+    }
+
+    <div class="sim-card">
+        <div class="sim-badge">● AKTIVNA</div>
+        <div class="chip"></div>
+        <div class="card-broj">**** **** **** ****</div>
+        <div class="card-stanje">@stanje.ToString("N2") KM</div>
+        <div class="card-label">Dostupno stanje</div>
+    </div>
+
+    <div class="nv-info-box">
+        ℹ️ Novac se dodaje na vaš račun kada student potvrdi prisustvo na terminu.
+    </div>
+
+    <div class="nv-section-title">Historija zarada</div>
+
+    @if (!Model.Any())
+    {
+        <div class="nv-empty">Nemate još nijednu transakciju.</div>
+    }
+    else
+    {
+        @foreach (var t in Model)
+        {
+            <div class="nv-row">
+                <span class="nv-tip">⬆ Uplata od studenta</span>
+                <span class="nv-datum">@t.datumUplate.ToString("dd.MM.yyyy HH:mm")</span>
+                <span class="nv-iznos-plus">+@(Math.Abs(t.iznos).ToString("N2")) KM</span>
+            </div>
+        }
+    }
+
+</div>

@@ -1,0 +1,314 @@
+﻿@model Earn_Learn.Models.VerifikacijaViewModel
+@{
+    ViewData["Title"] = "Zahtjevi za verifikaciju";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .ver-page {
+        max-width: 860px;
+        margin: 0 auto;
+        padding: 60px 20px;
+    }
+
+    .ver-counts {
+        display: flex;
+        justify-content: center;
+        gap: 80px;
+        margin-bottom: 60px;
+        text-align: center;
+    }
+
+    .ver-count .broj {
+        font-size: 4rem;
+        font-weight: 800;
+        color: #111;
+        line-height: 1;
+    }
+
+    .ver-count .label {
+        font-size: .95rem;
+        color: #888;
+        margin-top: 6px;
+    }
+
+    .ver-row {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        align-items: center;
+        gap: 20px;
+        padding: 18px 0;
+        border-bottom: 1px solid #eee;
+    }
+
+        .ver-row:last-child {
+            border-bottom: none;
+        }
+
+    .ver-ime {
+        font-size: .95rem;
+        font-weight: 600;
+        color: #111;
+    }
+
+    .ver-godina {
+        font-size: .88rem;
+        color: #666;
+        margin-top: 2px;
+    }
+
+    .predmet-tag {
+        display: inline-block;
+        background: #f0f4ff;
+        color: #334;
+        border-radius: 12px;
+        padding: 2px 10px;
+        font-size: .78rem;
+        font-weight: 600;
+        margin: 2px;
+    }
+
+    .ver-btns {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+
+    .btn-ver {
+        background: transparent;
+        border: 2px solid #5bc400;
+        color: #2e7d00;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .15s, color .15s;
+        white-space: nowrap;
+    }
+
+        .btn-ver:hover {
+            background: #5bc400;
+            color: #fff;
+        }
+
+    .btn-obrisi {
+        background: transparent;
+        border: 2px solid #ddd;
+        color: #777;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        transition: background .15s;
+        white-space: nowrap;
+    }
+
+        .btn-obrisi:hover {
+            background: #f5f5f5;
+        }
+
+    .btn-dok {
+        background: transparent;
+        border: 2px solid #ccc;
+        color: #555;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: .82rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 4px;
+        transition: background .15s;
+        white-space: nowrap;
+    }
+
+        .btn-dok:hover {
+            background: #f0f0f0;
+            color: #333;
+        }
+
+    .ver-empty {
+        text-align: center;
+        padding: 60px 0;
+        color: #aaa;
+        font-size: 1rem;
+    }
+
+    .alert-ok {
+        background: #e8f5e0;
+        color: #2e7d00;
+        border-radius: 8px;
+        padding: 12px 20px;
+        margin-bottom: 24px;
+        font-weight: 600;
+    }
+
+    .btn-prikaziSve {
+        display: block;
+        margin: 30px auto 0;
+        background: #111;
+        color: #fff;
+        border: none;
+        border-radius: 24px;
+        padding: 10px 28px;
+        font-size: .9rem;
+        font-weight: 700;
+        cursor: pointer;
+        width: fit-content;
+        text-decoration: none;
+    }
+</style>
+
+<div class="ver-page">
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-ok">✓ @TempData["Uspjeh"]</div>
+    }
+
+    <div class="ver-counts">
+        <div class="ver-count">
+            <div class="broj">@Model.BrojVerifikovanih</div>
+            <div class="label">Verifikovani korisnici</div>
+        </div>
+        <div class="ver-count">
+            <div class="broj">@Model.TutoriNaCekanju.Count</div>
+            <div class="label">Novi zahtjevi</div>
+        </div>
+    </div>
+
+    @if (!Model.TutoriNaCekanju.Any())
+    {
+        <div class="ver-empty">Nema zahtjeva za verifikaciju.</div>
+    }
+    else
+    {
+        @foreach (var item in Model.TutoriNaCekanju.Take(6))
+        {
+            <div class="ver-row">
+                <div>
+                    <div class="ver-ime">@item.Tutor.Ime @item.Tutor.Prezime</div>
+                    @if (item.Tutor.BrojIndeksa.HasValue)
+                    {
+                        <div class="ver-godina">Indeks: @item.Tutor.BrojIndeksa</div>
+                    }
+                    <div style="margin-top: 6px;">
+                        @if (item.Predmeti.Any())
+                        {
+                            @foreach (var p in item.Predmeti)
+                            {
+                                <span class="predmet-tag">@p.naziv</span>
+                            }
+                        }
+                        else
+                        {
+                            <span style="font-size:.82rem; color:#aaa;">Nije odabrao predmete</span>
+                        }
+                    </div>
+                    @if (item.PredmetiNaCekanju.Any() || item.PredmetNaCekanju != null)
+                    {
+                        <div style="margin-top: 6px;">
+                            <span style="font-size:.78rem; color:#c45000; font-weight:700;">⏳ Čeka odobrenje: </span>
+                            @foreach (var p in item.PredmetiNaCekanju)
+                            {
+                                <span class="predmet-tag" style="background:#fff3cd; color:#856404;">@p.naziv</span>
+                            }
+                            @if (item.PredmetNaCekanju != null)
+                            {
+                                <span class="predmet-tag" style="background:#fff3cd; color:#856404;">@item.PredmetNaCekanju.naziv</span>
+                            }
+                        </div>
+                    }
+                </div>
+
+                <div class="ver-btns">
+                    <form method="post" asp-action="VerifikujTutora" asp-controller="SystemManager" style="display:inline">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Tutor.Id" />
+                        <button type="submit" class="btn-ver">✔ verifikuj</button>
+                    </form>
+
+                    <form method="post" asp-action="OdbijTutora" asp-controller="SystemManager" style="display:inline"
+                          onsubmit="return confirm('Sigurno odbiti i obrisati ovaj nalog?')">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@item.Tutor.Id" />
+                        <button type="submit" class="btn-obrisi">🗑 obriši</button>
+                    </form>
+
+                    <a asp-controller="SystemManager" asp-action="PrilogTutora" asp-route-id="@item.Tutor.Id"
+                       class="btn-dok">⚠ dokumentacija</a>
+                </div>
+            </div>
+        }
+
+        @if (Model.TutoriNaCekanju.Count > 6)
+        {
+            <a href="#" class="btn-prikaziSve"
+               onclick="document.querySelectorAll('.skriveni').forEach(e=>e.style.display='grid');this.style.display='none';return false;">
+                Prikaži sve
+            </a>
+
+            @foreach (var item in Model.TutoriNaCekanju.Skip(6))
+            {
+                <div class="ver-row skriveni" style="display:none">
+                    <div>
+                        <div class="ver-ime">@item.Tutor.Ime @item.Tutor.Prezime</div>
+                        @if (item.Tutor.BrojIndeksa.HasValue)
+                        {
+                            <div class="ver-godina">Indeks: @item.Tutor.BrojIndeksa</div>
+                        }
+                        <div style="margin-top: 6px;">
+                            @if (item.Predmeti.Any())
+                            {
+                                @foreach (var p in item.Predmeti)
+                                {
+                                    <span class="predmet-tag">@p.naziv</span>
+                                }
+                            }
+                            else
+                            {
+                                <span style="font-size:.82rem; color:#aaa;">Nije odabrao predmete</span>
+                            }
+                        </div>
+                        @if (item.PredmetiNaCekanju.Any() || item.PredmetNaCekanju != null)
+                        {
+                            <div style="margin-top: 6px;">
+                                <span style="font-size:.78rem; color:#c45000; font-weight:700;">⏳ Čeka odobrenje: </span>
+                                @foreach (var p in item.PredmetiNaCekanju)
+                                {
+                                    <span class="predmet-tag" style="background:#fff3cd; color:#856404;">@p.naziv</span>
+                                }
+                                @if (item.PredmetNaCekanju != null)
+                                {
+                                    <span class="predmet-tag" style="background:#fff3cd; color:#856404;">@item.PredmetNaCekanju.naziv</span>
+                                }
+                            </div>
+                        }
+                    </div>
+
+                    <div class="ver-btns">
+                        <form method="post" asp-action="VerifikujTutora" asp-controller="SystemManager" style="display:inline">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.Tutor.Id" />
+                            <button type="submit" class="btn-ver">✔ verifikuj</button>
+                        </form>
+
+                        <form method="post" asp-action="OdbijTutora" asp-controller="SystemManager" style="display:inline"
+                              onsubmit="return confirm('Sigurno odbiti i obrisati ovaj nalog?')">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="id" value="@item.Tutor.Id" />
+                            <button type="submit" class="btn-obrisi">🗑 obriši</button>
+                        </form>
+
+                        <a asp-controller="SystemManager" asp-action="PrilogTutora" asp-route-id="@item.Tutor.Id"
+                           class="btn-dok">⚠ dokumentacija</a>
+                    </div>
+                </div>
+            }
+        }
+    }
+</div>
