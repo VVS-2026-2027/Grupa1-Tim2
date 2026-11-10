@@ -1,0 +1,206 @@
+﻿@model IEnumerable<Earn_Learn.Models.TerminSaTutorom>
+@{
+    ViewData["Title"] = "Moji časovi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .casovi-wrapper { max-width: 1000px; margin: 60px auto; padding: 0 24px; }
+    .casovi-naslov { font-size: 1.8rem; font-weight: 800; color: #0d2d45; margin-bottom: 4px; }
+    .casovi-podnaslov { font-size: 1rem; font-weight: 600; color: #888; margin-bottom: 40px; }
+
+    .tabela-casova { width: 100%; border-collapse: collapse; margin-top: 20px; background: #fff; }
+    .tabela-casova th {
+        text-align: left; padding: 12px 16px; font-size: .85rem;
+        font-weight: 800; color: #5bc400; letter-spacing: 1px;
+        text-transform: uppercase; border-bottom: 2px solid #f0f0f0;
+    }
+    .tabela-casova td {
+        padding: 16px; font-size: .92rem; color: #333;
+        border-bottom: 1px solid #f5f5f5; vertical-align: middle;
+    }
+    .tabela-casova tr:hover { background-color: #fafafa; }
+
+    .predmet-naziv { font-weight: 700; color: #0d2d45; }
+
+    .status-badge {
+        display: inline-block; padding: 4px 12px; border-radius: 4px;
+        font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+    }
+    .status-Slobodan   { background: #e8f5e9; color: #2e7d32; }
+    .status-Rezervisan { background: #fff3e0; color: #ef6c00; }
+    .status-Odrzan     { background: #f3e5f5; color: #6a1b9a; }
+    .status-Otkazan    { background: #ffebee; color: #c62828; }
+
+    .btn-otkai {
+        background: #f0f0f0; border: 1px solid #ddd; border-radius: 8px;
+        padding: 6px 12px; font-size: .80rem; font-weight: 600; cursor: pointer;
+        color: #555; display: inline-flex; align-items: center; gap: 5px;
+        transition: background .2s; white-space: nowrap;
+    }
+    .btn-otkai:hover { background: #ffe0e0; border-color: #f88; color: #c00; }
+
+    .btn-potvrdi {
+        background: #5bc400; border: none; border-radius: 8px;
+        padding: 6px 14px; font-size: .80rem; font-weight: 700; cursor: pointer;
+        color: #fff; display: inline-flex; align-items: center; gap: 5px;
+        transition: opacity .2s; white-space: nowrap;
+    }
+    .btn-potvrdi:hover { opacity: .85; }
+    .btn-potvrdi:disabled { opacity: .5; cursor: not-allowed; }
+
+    .akcije-cell { display: flex; gap: 6px; flex-wrap: wrap; }
+    .cijena-cell { font-weight: 700; color: #0d2d45; }
+
+    .alert-success {
+        padding: 13px 22px; background: #e8f5e0; color: #2e7d00;
+        border-radius: 8px; font-weight: 600; font-size: .93rem; margin-bottom: 20px;
+    }
+    .alert-error {
+        padding: 13px 22px; background: #fff0f0; color: #c00;
+        border-radius: 8px; font-weight: 600; font-size: .93rem; margin-bottom: 20px;
+    }
+    .casovi-footer { margin-top: 60px; color: #aaa; font-size: .82rem; }
+
+    #toast {
+        position: fixed; bottom: 28px; right: 28px; z-index: 9999;
+        border-radius: 14px; padding: 16px 24px;
+        font-weight: 700; font-size: 1rem;
+        box-shadow: 0 6px 28px rgba(0,0,0,.25);
+        display: none; max-width: 380px;
+    }
+    #toast.ok  { background: #5bc400; color: #fff; }
+    #toast.err { background: #c0392b; color: #fff; }
+</style>
+
+<div id="toast"></div>
+
+<div class="casovi-wrapper">
+    <div class="casovi-naslov">Moji časovi</div>
+    <div class="casovi-podnaslov">Pregled zakazanih instrukcija i istorija održanih časova</div>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-success">✓ @TempData["Uspjeh"]</div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert-error">✗ @TempData["Greska"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Nemate zakazanih ili održanih časova.</div>
+    }
+    else
+    {
+        <table class="tabela-casova">
+            <thead>
+                <tr>
+                    <th>Predmet</th>
+                    <th>Tutor</th>
+                    <th>Datum i vrijeme</th>
+                    <th>Tip</th>
+                    <th>Cijena</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stavka in Model)
+                {
+                    var tipTekst = stavka.Termin.tipInstrukcija.ToString() == "Online" ? "Online" :
+                                   stavka.Termin.tipInstrukcija.ToString() == "Hibridno" ? "Hibridno" : "Uživo";
+                    <tr id="row-@stavka.Termin.id">
+                        <td><span class="predmet-naziv">@(stavka.Predmet != null ? stavka.Predmet.naziv : "Opšte instrukcije")</span></td>
+                        <td>@stavka.Tutor.Ime @stavka.Tutor.Prezime</td>
+                        <td>@stavka.Termin.datumIVrijeme.ToString("dd. MMM yyyy. u HH:mm")</td>
+                        <td>@tipTekst</td>
+                        <td class="cijena-cell">@stavka.Termin.cijena.ToString("0.00") KM</td>
+                        <td>
+                            <span class="status-badge status-@stavka.Termin.status.ToString()" id="status-@stavka.Termin.id">
+                                @stavka.Termin.status.ToString()
+                            </span>
+                        </td>
+                        <td>
+                            <div class="akcije-cell" id="akcije-@stavka.Termin.id">
+                                @if (stavka.Termin.status == Earn_Learn.Enums.StatusTermina.Rezervisan)
+                                {
+                                    <button class="btn-potvrdi"
+                                            onclick="potvrdiPrisustvo(@stavka.Termin.id, @stavka.Termin.cijena.ToString("0.00", System.Globalization.CultureInfo.InvariantCulture), this)">
+                                        ✓ Potvrdi prisustvo
+                                    </button>
+
+                                    @if (stavka.Termin.datumIVrijeme > DateTime.Now)
+                                    {
+                                        <form method="post" asp-action="OtkaziTermin" asp-controller="Student"
+                                              onsubmit="return confirm('Sigurno želiš otkazati ovaj termin?')">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="terminId" value="@stavka.Termin.id" />
+                                            <button type="submit" class="btn-otkai">🗑 otkaži</button>
+                                        </form>
+                                    }
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <div class="casovi-footer">&copy; 2026<br />Sva prava zadržana</div>
+</div>
+
+@section Scripts {
+<script>
+    async function potvrdiPrisustvo(terminId, cijena, btn) {
+        if (!confirm(`Potvrditi prisustvo? Sa računa će biti skinuto ${parseFloat(cijena).toFixed(2)} KM.`)) return;
+
+        btn.disabled = true;
+        btn.textContent = '...';
+
+        const formData = new FormData();
+        formData.append('terminId', terminId);
+        formData.append('__RequestVerificationToken',
+            document.querySelector('[name="__RequestVerificationToken"]').value);
+
+        try {
+            const resp = await fetch('/Student/PotvrdiPrisustvo', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await resp.json();
+
+            if (data.success) {
+                const statusEl = document.getElementById('status-' + terminId);
+                statusEl.className = 'status-badge status-Odrzan';
+                statusEl.textContent = 'Odrzan';
+                document.getElementById('akcije-' + terminId).innerHTML = '';
+                prikaziToast(data.poruka, true);
+            } else {
+                btn.disabled = false;
+                btn.textContent = '✓ Potvrdi prisustvo';
+                prikaziToast(data.poruka, false);
+            }
+        } catch {
+            btn.disabled = false;
+            btn.textContent = '✓ Potvrdi prisustvo';
+            prikaziToast('Greška pri potvrdi. Pokušajte ponovo.', false);
+        }
+    }
+
+    function prikaziToast(poruka, uspjeh) {
+        const t = document.getElementById('toast');
+        t.className = uspjeh ? 'ok' : 'err';
+        t.textContent = (uspjeh ? '✓ ' : '✗ ') + poruka;
+        t.style.display = 'block';
+        t.style.opacity = '1';
+        setTimeout(() => {
+            t.style.transition = 'opacity .5s';
+            t.style.opacity = '0';
+            setTimeout(() => { t.style.display = 'none'; t.style.opacity = '1'; t.style.transition = ''; }, 500);
+        }, 4000);
+    }
+</script>
+}

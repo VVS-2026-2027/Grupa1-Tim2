@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+**/.vs/
+**/*.user
+**/*.suo
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/wwwroot/uploads/
+**/Properties/PublishProfiles/
+**/appsettings.Development.json
+*.db
+*.db-shm
+*.db-wal

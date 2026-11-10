@@ -1,0 +1,471 @@
+﻿@page
+@using Earn_Learn.Areas.Identity.Pages.Account
+@model RegisterModel
+@{
+    ViewData["Title"] = "Registracija";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .reg-hero {
+        background: #5bc400;
+        padding: 40px 20px;
+        text-align: center;
+        margin: 0;
+        border-radius: 0;
+    }
+
+        .reg-hero h1 {
+            color: #fff;
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        .reg-hero p {
+            color: rgba(255,255,255,0.88);
+            font-size: .97rem;
+            max-width: 520px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+    .reg-form-section {
+        background: linear-gradient(180deg, #5bc400 0%, #2d7a00 100%);
+        margin: 0;
+        border-radius: 0 0 18px 18px;
+        padding: 40px 20px 60px;
+        display: flex;
+        justify-content: center;
+    }
+
+    .reg-card {
+        background: #fff;
+        border-radius: 18px;
+        padding: 36px 40px;
+        width: 100%;
+        max-width: 480px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+    }
+
+        .reg-card h2 {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+
+    .reg-field {
+        margin-bottom: 16px;
+    }
+
+        .reg-field label {
+            display: block;
+            font-size: .82rem;
+            font-weight: 700;
+            color: #555;
+            margin-bottom: 5px;
+        }
+
+        .reg-field input[type="text"],
+        .reg-field input[type="email"],
+        .reg-field input[type="password"],
+        .reg-field input[type="file"],
+        .reg-field select {
+            width: 100%;
+            border: none;
+            background: #f0f0f0;
+            border-radius: 8px;
+            padding: 11px 14px;
+            font-size: .95rem;
+            font-family: 'Nunito', sans-serif;
+            color: #333;
+            outline: none;
+            box-sizing: border-box;
+            transition: background .2s;
+        }
+
+            .reg-field input:focus,
+            .reg-field select:focus {
+                background: #e5e5e5;
+            }
+
+        .reg-field input::placeholder {
+            color: #aaa;
+        }
+
+    #tutor-fields {
+        display: none;
+    }
+
+    .btn-registruj {
+        width: 100%;
+        background: #fff;
+        border: 2px solid #5bc400;
+        color: #5bc400;
+        border-radius: 30px;
+        padding: 12px;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        margin-top: 8px;
+        font-family: 'Nunito', sans-serif;
+        transition: background .2s, color .2s;
+    }
+
+        .btn-registruj:hover {
+            background: #5bc400;
+            color: #fff;
+        }
+
+    .reg-login-hint {
+        text-align: center;
+        padding: 30px 20px 10px;
+        color: #666;
+        font-size: .95rem;
+    }
+
+        .reg-login-hint a {
+            color: #5bc400;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+    .text-danger {
+        font-size: .8rem;
+        color: #e53935;
+        margin-top: 3px;
+        display: block;
+    }
+
+    .validation-summary-errors ul {
+        background: #fff3f3;
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 16px;
+        color: #e53935;
+        font-size: .85rem;
+    }
+
+    .val-hint {
+        font-size: .8rem;
+        margin-top: 5px;
+        display: none;
+        padding: 8px 12px;
+        border-radius: 6px;
+    }
+
+        .val-hint.greska {
+            display: block;
+            background: #fff3f3;
+            color: #e53935;
+            border: 1px solid #fecaca;
+        }
+
+        .val-hint.ok {
+            display: block;
+            background: #f0fdf4;
+            color: #16a34a;
+            border: 1px solid #bbf7d0;
+        }
+
+    .sifra-pravila {
+        margin-top: 6px;
+        font-size: .8rem;
+        display: none;
+    }
+
+        .sifra-pravila.vidljivo {
+            display: block;
+        }
+
+    .pravilo {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        padding: 2px 0;
+        color: #aaa;
+        transition: color .2s;
+    }
+
+        .pravilo.ispunjeno {
+            color: #16a34a;
+        }
+
+        .pravilo.neispunjeno {
+            color: #e53935;
+        }
+
+    .pravilo-ikona {
+        font-size: .85rem;
+        min-width: 14px;
+    }
+
+    .password-wrapper {
+        position: relative;
+        display: flex;
+        align-items: center;
+    }
+
+        .password-wrapper input {
+            padding-right: 45px !important;
+        }
+
+    .btn-toggle-password {
+        position: absolute;
+        right: 0;
+        top: 0;
+        height: 100%;
+        background: transparent;
+        border: none;
+        padding: 0 14px;
+        color: #888;
+        cursor: pointer;
+        font-size: 1.1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 0 8px 8px 0;
+    }
+
+        .btn-toggle-password:focus {
+            outline: none;
+        }
+
+        .btn-toggle-password:hover {
+            color: #5bc400;
+        }
+</style>
+
+<section class="reg-hero">
+    <h1>Pridruži se Earn&amp;Learn zajednici</h1>
+    <p>
+        Popuni svoje podatke ispod i odaberi ulogu kako bi započeo/la rad na platformi.
+    </p>
+</section>
+
+<section class="reg-form-section">
+    <div class="reg-card">
+        <h2>Registracijski podaci</h2>
+
+        <form id="registerForm" method="post" action="/Account/RegisterIdentity" enctype="multipart/form-data">
+            <input type="hidden" name="returnUrl" value="@Model.ReturnUrl" />
+            @Html.AntiForgeryToken()
+
+            <div asp-validation-summary="ModelOnly" class="validation-summary-errors"></div>
+
+            <div class="reg-field">
+                <label asp-for="Input.Ime">Ime</label>
+                <input asp-for="Input.Ime" type="text" placeholder="Unesite ime" />
+                <span asp-validation-for="Input.Ime" class="text-danger"></span>
+            </div>
+
+            <div class="reg-field">
+                <label asp-for="Input.Prezime">Prezime</label>
+                <input asp-for="Input.Prezime" type="text" placeholder="Unesite prezime" />
+                <span asp-validation-for="Input.Prezime" class="text-danger"></span>
+            </div>
+
+            <div class="reg-field">
+                <label asp-for="Input.Email">Email</label>
+                <input asp-for="Input.Email" type="email" id="emailInput" placeholder="tvojmail@etf.unsa.ba" />
+                <div class="val-hint" id="emailHint"></div>
+                <span asp-validation-for="Input.Email" class="text-danger"></span>
+            </div>
+
+            <div class="reg-field">
+                <label asp-for="Input.Password">Šifra</label>
+                <div class="password-wrapper">
+                    <input asp-for="Input.Password" type="password" id="sifraInput" placeholder="Najmanje 6 karaktera" />
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('sifraInput', 'okoIkonaSifra')">
+                        <i class="bi bi-eye-slash" id="okoIkonaSifra"></i>
+                    </button>
+                </div>
+                <div class="sifra-pravila" id="sifraPravila">
+                    <div class="pravilo" id="p-duzina">
+                        <span class="pravilo-ikona">○</span> Najmanje 6 karaktera
+                    </div>
+                    <div class="pravilo" id="p-veliko">
+                        <span class="pravilo-ikona">○</span> Najmanje jedno veliko slovo
+                    </div>
+                    <div class="pravilo" id="p-malo">
+                        <span class="pravilo-ikona">○</span> Najmanje jedno malo slovo
+                    </div>
+                    <div class="pravilo" id="p-broj">
+                        <span class="pravilo-ikona">○</span> Najmanje jedan broj
+                    </div>
+                </div>
+                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            </div>
+
+            <div class="reg-field">
+                <label asp-for="Input.ConfirmPassword">Potvrda</label>
+                <div class="password-wrapper">
+                    <input asp-for="Input.ConfirmPassword" type="password" id="potvrdaInput" placeholder="Ponovo upiši šifru" />
+                    <button type="button" class="btn-toggle-password" onclick="togglePasswordVisibility('potvrdaInput', 'okoIkonaPotvrda')">
+                        <i class="bi bi-eye-slash" id="okoIkonaPotvrda"></i>
+                    </button>
+                </div>
+                <div class="val-hint" id="potvrdaHint"></div>
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+            </div>
+
+            <div class="reg-field">
+                <label>Izaberi ulogu</label>
+                <select id="ulogaSelect" name="uloga">
+                    <option value="2">Student</option>
+                    <option value="1">Tutor</option>
+                </select>
+            </div>
+
+            <input type="checkbox" id="zelimTutor" asp-for="Input.ZelimBitiTutor" style="display:none;" />
+
+            <div id="tutor-fields">
+                <div class="reg-field">
+                    <label asp-for="Input.OdabraniPredmeti">Predmeti koje želim podučavati</label>
+                    <div style="max-height: 200px; overflow-y: auto; background: #f0f0f0; border-radius: 8px; padding: 10px;">
+                        @foreach (var predmet in Model.PredmetiSelectList)
+                        {
+                            <label style="display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: .9rem; cursor: pointer;">
+                                <input type="checkbox" name="Input.OdabraniPredmeti" value="@predmet.Value"
+                                       style="accent-color: #5bc400; width: 16px; height: 16px;" />
+                                @predmet.Text
+                            </label>
+                        }
+                    </div>
+                    <span asp-validation-for="Input.OdabraniPredmeti" class="text-danger"></span>
+                </div>
+
+                <div class="reg-field">
+                    <label>Prilog - ocjene iz predmeta</label>
+                    <input type="file" name="Input.PrilogOcjene" accept="image/*,.pdf" />
+                    <small style="color:#888; font-size:.8rem;">JPG, PNG ili PDF, max 5MB</small>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-registruj">Registruj se</button>
+        </form>
+    </div>
+</section>
+
+<div class="reg-login-hint">
+    <strong>Već imate nalog? Prijavite se</strong><br>
+    <a asp-area="Identity" asp-page="/Account/Login">Kliknite ovdje za prijavu u postojeći račun.</a>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        // ── KONTROLA DROPDOWNA I PRIKAZ POLJA ──
+        var ulogaSelect = document.getElementById('ulogaSelect');
+        var zelimTutorCheckbox = document.getElementById('zelimTutor');
+        var tutorFields = document.getElementById('tutor-fields');
+
+        ulogaSelect.addEventListener('change', function () {
+            if (this.value === "1") {
+                zelimTutorCheckbox.checked = true;
+                tutorFields.style.display = 'block';
+            } else {
+                zelimTutorCheckbox.checked = false;
+                tutorFields.style.display = 'none';
+            }
+        });
+
+        if (ulogaSelect.value === "1") {
+            zelimTutorCheckbox.checked = true;
+            tutorFields.style.display = 'block';
+        }
+
+        // ── EMAIL VALIDACIJA ──
+        var emailInput = document.getElementById('emailInput');
+        var emailHint = document.getElementById('emailHint');
+
+        emailInput.addEventListener('input', function () {
+            var val = this.value.trim();
+            if (val === '') {
+                emailHint.className = 'val-hint';
+                emailHint.textContent = '';
+                return;
+            }
+            if (!val.endsWith('@@etf.unsa.ba')) {
+                emailHint.className = 'val-hint greska';
+                emailHint.textContent = 'Email mora biti u formatu: ime@@etf.unsa.ba';
+            } else {
+                emailHint.className = 'val-hint ok';
+                emailHint.textContent = 'Email je ispravan';
+            }
+        });
+
+        document.getElementById('registerForm').addEventListener('submit', function (e) {
+            var email = emailInput.value.trim();
+            if (!email.endsWith('@@etf.unsa.ba')) {
+                e.preventDefault();
+                emailHint.className = 'val-hint greska';
+                emailHint.textContent = 'Email mora biti u formatu: ime@@etf.unsa.ba';
+                emailInput.focus();
+            }
+        });
+
+        // ── SIFRA VALIDACIJA ──
+        var sifraInput = document.getElementById('sifraInput');
+        var sifraPravila = document.getElementById('sifraPravila');
+
+        function provjeriPravilo(id, ispunjeno) {
+            var el = document.getElementById(id);
+            var ikona = el.querySelector('.pravilo-ikona');
+            if (ispunjeno) {
+                el.className = 'pravilo ispunjeno';
+                ikona.textContent = '✓';
+            } else {
+                el.className = 'pravilo neispunjeno';
+                ikona.textContent = '✗';
+            }
+        }
+
+        sifraInput.addEventListener('focus', function () {
+            sifraPravila.className = 'sifra-pravila vidljivo';
+        });
+
+        sifraInput.addEventListener('input', function () {
+            var val = this.value;
+            sifraPravila.className = 'sifra-pravila vidljivo';
+            provjeriPravilo('p-duzina', val.length >= 6);
+            provjeriPravilo('p-veliko', /[A-Z]/.test(val));
+            provjeriPravilo('p-malo', /[a-z]/.test(val));
+            provjeriPravilo('p-broj', /[0-9]/.test(val));
+        });
+
+        // ── POTVRDA SIFRE ──
+        var potvrdaInput = document.getElementById('potvrdaInput');
+        var potvrdaHint = document.getElementById('potvrdaHint');
+
+        potvrdaInput.addEventListener('input', function () {
+            if (this.value === '') {
+                potvrdaHint.className = 'val-hint';
+                potvrdaHint.textContent = '';
+                return;
+            }
+            if (this.value !== sifraInput.value) {
+                potvrdaHint.className = 'val-hint greska';
+                potvrdaHint.textContent = 'Šifre se ne podudaraju.';
+            } else {
+                potvrdaHint.className = 'val-hint ok';
+                potvrdaHint.textContent = 'Šifre se podudaraju';
+            }
+        });
+
+        // ── FUNKCIJA ZA PRIKAZ/SKRIVANJE ŠIFRE ──
+        function togglePasswordVisibility(inputId, iconId) {
+            var input = document.getElementById(inputId);
+            var icon = document.getElementById(iconId);
+            if (input.type === "password") {
+                input.type = "text";
+                icon.className = "bi bi-eye";
+            } else {
+                input.type = "password";
+                icon.className = "bi bi-eye-slash";
+            }
+        }
+    </script>
+}

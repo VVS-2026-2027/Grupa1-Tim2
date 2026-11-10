@@ -1,0 +1,170 @@
+﻿@using Earn_Learn.Enums
+@{
+    ViewData["Title"] = "Kreiraj termin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var predmeti = ViewBag.Predmeti as List<Earn_Learn.Models.Predmet>
+                   ?? new List<Earn_Learn.Models.Predmet>();
+    double cijena = ViewBag.CijenaPoSatu;
+}
+
+<style>
+    .kreiraj-wrapper {
+        max-width: 600px;
+        margin: 60px auto;
+        padding: 0 24px;
+    }
+
+    .kreiraj-naslov {
+        font-size: 1.6rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin-bottom: 4px;
+    }
+
+    .kreiraj-cijena {
+        font-size: 1.1rem;
+        color: #5bc400;
+        font-weight: 700;
+        margin-bottom: 32px;
+    }
+
+    .form-label {
+        font-weight: 700;
+        color: #0d2d45;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    .form-group {
+        margin-bottom: 28px;
+    }
+
+    .tip-opcije {
+        display: flex;
+        gap: 16px;
+    }
+
+    .tip-kartica {
+        flex: 1;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        padding: 18px;
+        text-align: center;
+        cursor: pointer;
+        font-weight: 700;
+        color: #555;
+        transition: all 0.2s;
+        user-select: none;
+    }
+
+        .tip-kartica.aktivan {
+            border-color: #0d2d45;
+            background: #0d2d45;
+            color: #fff;
+        }
+
+        .tip-kartica input[type="radio"] {
+            display: none;
+        }
+
+    .form-select, .form-control {
+        width: 100%;
+        padding: 12px 14px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-size: 0.95rem;
+        font-family: 'Nunito', sans-serif;
+        color: #333;
+        outline: none;
+        transition: border-color 0.2s;
+    }
+
+        .form-select:focus, .form-control:focus {
+            border-color: #5bc400;
+        }
+
+    .btn-potvrdi {
+        width: 100%;
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 14px;
+        font-size: 1rem;
+        font-weight: 800;
+        cursor: pointer;
+        transition: opacity 0.2s;
+        font-family: 'Nunito', sans-serif;
+    }
+
+        .btn-potvrdi:hover {
+            opacity: 0.85;
+        }
+</style>
+
+<div class="kreiraj-wrapper">
+    <div class="kreiraj-naslov">Kreiraj novi termin</div>
+    <div class="kreiraj-cijena">Cijena instrukcija: @cijena KM / h</div>
+
+    <form asp-controller="Tutor" asp-action="KreirajTermin" method="post">
+        @Html.AntiForgeryToken()
+
+        <div class="form-group">
+            <label class="form-label">Odaberi način izvođenja tutorijala:</label>
+            <div class="tip-opcije">
+                <label class="tip-kartica aktivan" id="lblOnline">
+                    <input type="radio" name="tipInstrukcija" value="Online" checked />
+                    Online
+                </label>
+                <label class="tip-kartica" id="lblUzivo">
+                    <input type="radio" name="tipInstrukcija" value="Uzivo" />
+                    Uživo
+                </label>
+                <label class="tip-kartica" id="lblHibridno">
+                    <input type="radio" name="tipInstrukcija" value="Hibridno" />
+                    Hibridno
+                </label>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Odaberi predmet:</label>
+            @if (predmeti.Any())
+            {
+                <select name="idPredmeta" class="form-select">
+                    @foreach (var p in predmeti)
+                    {
+                        <option value="@p.id">@p.naziv</option>
+                    }
+                </select>
+            }
+            else
+            {
+                <div style="color: #e53935; font-weight: 600; padding: 10px; background: #fff3f3; border-radius: 8px;">
+                    Nemate dodijeljenih predmeta. Kontaktirajte administratora.
+                </div>
+            }
+        </div>
+
+        <div class="form-group">
+            <label class="form-label">Datum i vrijeme termina:</label>
+            <input type="datetime-local" name="datumIVrijeme" class="form-control" required
+                   min="@DateTime.Now.ToString("yyyy-MM-ddTHH:mm")" />
+        </div>
+
+        <button type="submit" class="btn-potvrdi" @(predmeti.Any() ? "" : "disabled")>
+            Potvrdi
+        </button>
+    </form>
+</div>
+
+<script>
+    document.querySelectorAll('input[name="tipInstrukcija"]').forEach(function (radio) {
+        radio.addEventListener('change', function () {
+            document.querySelectorAll('.tip-kartica').forEach(function (k) {
+                k.classList.remove('aktivan');
+            });
+            this.parentElement.classList.add('aktivan');
+        });
+    });
+</script>

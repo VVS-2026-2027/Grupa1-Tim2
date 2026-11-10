@@ -1,0 +1,91 @@
+﻿@{
+    ViewData["Title"] = "Pristup odbijen";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .access-wrapper {
+        max-width: 900px;
+        margin: 50px auto;
+        padding: 0 20px;
+    }
+
+    .access-card {
+        background: #b0c8d8;
+        border-radius: 18px;
+        padding: 70px 40px;
+        text-align: center;
+    }
+
+    .access-code {
+        font-size: 6rem;
+        font-weight: 800;
+        color: #0d2d45;
+        line-height: 1;
+        margin-bottom: 15px;
+    }
+
+    .access-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin-bottom: 15px;
+    }
+
+    .access-text {
+        color: #555;
+        font-size: 1.05rem;
+        max-width: 500px;
+        margin: 0 auto 30px;
+        line-height: 1.6;
+    }
+
+    .btn-home {
+        background: #5bc400;
+        color: white;
+        text-decoration: none;
+        padding: 13px 36px;
+        border-radius: 30px;
+        font-weight: 700;
+        display: inline-block;
+        transition: opacity .2s, transform .15s;
+    }
+
+        .btn-home:hover {
+            color: white;
+            opacity: .9;
+            transform: translateY(-2px);
+        }
+
+    .lock-icon {
+        font-size: 3rem;
+        color: #0d2d45;
+        margin-bottom: 15px;
+    }
+</style>
+
+<div class="access-wrapper">
+    <div class="access-card">
+        <div class="lock-icon">
+            <i class="bi bi-shield-lock"></i>
+        </div>
+
+        <div class="access-code">403</div>
+
+        <div class="access-title">
+            Pristup odbijen
+        </div>
+
+        <div class="access-text">
+            Nemate ovlaštenje za pristup ovoj stranici.
+            Ukoliko smatrate da je došlo do greške,
+            obratite se administratoru sistema.
+        </div>
+
+        <a asp-controller="Home"
+               asp-action="Index"
+               class="btn-home">
+            Povratak na početnu
+        </a>
+    </div>
+</div>

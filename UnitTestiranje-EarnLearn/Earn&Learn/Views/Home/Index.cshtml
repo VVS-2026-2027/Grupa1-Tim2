@@ -1,0 +1,250 @@
+﻿@{
+    ViewData["Title"] = "Početna";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    /* ── HERO ── */
+    .el-hero {
+        background: #0d2d45;
+        padding: 90px 20px;
+        text-align: center;
+        border-radius: 0 0 18px 18px;
+        margin: 0 30px 60px;
+    }
+
+        .el-hero h1 {
+            color: #fff;
+            font-size: 2.8rem;
+            font-weight: 800;
+            margin-bottom: 8px;
+        }
+
+        .el-hero p {
+            color: #a0b8c8;
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+        }
+
+    .btn-zapocni {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 30px;
+        padding: 14px 42px;
+        font-size: 1.1rem;
+        font-weight: 700;
+        cursor: pointer;
+        text-decoration: none;
+        transition: opacity .2s, transform .15s;
+        display: inline-block;
+    }
+
+        .btn-zapocni:hover {
+            opacity: .88;
+            transform: translateY(-2px);
+            color: #fff;
+        }
+
+    /* ── FEATURES (alternating) ── */
+    .el-features {
+        max-width: 780px;
+        margin: 0 auto 70px;
+        padding: 0 20px;
+    }
+
+    .el-feature-row {
+        display: flex;
+        align-items: center;
+        margin-bottom: 48px;
+        gap: 30px;
+    }
+
+        .el-feature-row.reverse {
+            flex-direction: row-reverse;
+        }
+
+    .el-feature-text {
+        flex: 1;
+    }
+
+        .el-feature-text h3 {
+            font-weight: 800;
+            color: #0d2d45;
+            font-size: 1.3rem;
+            margin-bottom: 6px;
+        }
+
+        .el-feature-text p {
+            color: #888;
+            font-size: .97rem;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+    .el-feature-icon {
+        flex: 0 0 90px;
+        text-align: center;
+        font-size: 3.2rem;
+        color: #5bc400;
+        background: #f4fff0;
+        border-radius: 16px;
+        width: 90px;
+        height: 90px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* ── ICON ROW ── */
+    .el-icon-row {
+        display: flex;
+        justify-content: center;
+        gap: 50px;
+        margin-bottom: 60px;
+        flex-wrap: wrap;
+        padding: 0 20px;
+    }
+
+    .el-icon-item {
+        text-align: center;
+        min-width: 110px;
+    }
+
+        .el-icon-item .icon-circle {
+            width: 64px;
+            height: 64px;
+            background: #f4fff0;
+            border-radius: 50%;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: #5bc400;
+        }
+
+        .el-icon-item span.label {
+            font-weight: 700;
+            color: #0d2d45;
+            font-size: .9rem;
+        }
+
+    /* ── CTA TEXT ── */
+    .el-cta {
+        text-align: center;
+        margin-bottom: 50px;
+        padding: 0 20px;
+    }
+
+        .el-cta h2 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 6px;
+        }
+
+        .el-cta p {
+            color: #a0b8c8;
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+    /* ── POPULARNI PREDMETI ── */
+    .el-popular {
+        max-width: 780px;
+        margin: 0 auto 60px;
+        background: #f4f6fa;
+        border-radius: 12px;
+        padding: 24px 30px;
+    }
+
+        .el-popular h5 {
+            font-weight: 800;
+            color: #0d2d45;
+            font-size: .95rem;
+            margin-bottom: 10px;
+        }
+
+        .el-popular p {
+            color: #666;
+            font-size: .9rem;
+            margin: 0 0 4px;
+        }
+</style>
+
+<!-- HERO -->
+<section class="el-hero">
+    <h1>Earn&amp;Learn</h1>
+    <p>Za studente, od studenata.</p>
+    <a href="/Identity/Account/Register" class="btn-zapocni">Započni</a>
+</section>
+
+<!-- FEATURES -->
+<section class="el-features">
+
+    <div class="el-feature-row">
+        <div class="el-feature-text">
+            <h3>Sigurno plaćanje</h3>
+            <p>Svaka transakcija je sigurna i pouzdana.</p>
+        </div>
+        <div class="el-feature-icon">
+            <i class="bi bi-credit-card-2-front-fill"></i>
+        </div>
+    </div>
+
+    <div class="el-feature-row reverse">
+        <div class="el-feature-text">
+            <h3>Mogućnost povezivanja</h3>
+            <p>Stvaranje konekcija i poznanstava među studentima.</p>
+        </div>
+        <div class="el-feature-icon">
+            <i class="bi bi-people-fill"></i>
+        </div>
+    </div>
+
+    <div class="el-feature-row">
+        <div class="el-feature-text">
+            <h3>Provjereni tutori</h3>
+            <p>Istaknuti studenti ETFa u ulozi su tutora.</p>
+        </div>
+        <div class="el-feature-icon">
+            <i class="bi bi-person-check-fill"></i>
+        </div>
+    </div>
+
+</section>
+
+<!-- ICON ROW -->
+<section class="el-icon-row">
+    <div class="el-icon-item">
+        <div class="icon-circle"><i class="bi bi-shield-check"></i></div>
+        <span class="label">Sigurno plaćanje</span>
+    </div>
+    <div class="el-icon-item">
+        <div class="icon-circle"><i class="bi bi-person-fill"></i></div>
+        <span class="label">Studenti kao tutori</span>
+    </div>
+    <div class="el-icon-item">
+        <div class="icon-circle"><i class="bi bi-lightning-fill"></i></div>
+        <span class="label">Brza komunikacija</span>
+    </div>
+    <div class="el-icon-item">
+        <div class="icon-circle"><i class="bi bi-mortarboard-fill"></i></div>
+        <span class="label">Akademski uspjeh</span>
+    </div>
+</section>
+
+<!-- CTA -->
+<section class="el-cta">
+    <h2>Earn: Postani tutor i prenesi svoje znanje drugima</h2>
+    <p>Learn: Uz pomoć kolega-tutora položi svaki naredni ispit</p>
+</section>
+
+<!-- POPULARNI PREDMETI -->
+<div class="el-popular">
+    <h5>Popularni predmeti</h5>
+    <p>Matematika: Inženjerska matematika 1, Linearna algebra i geometrija</p>
+    <p>Programiranje: Tehnike programiranja, Razvoj programskih rješenja</p>
+</div>

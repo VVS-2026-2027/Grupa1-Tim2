@@ -1,0 +1,383 @@
+﻿@model Earn_Learn.Models.TutorProfilViewModel
+@using Earn_Learn.Enums
+
+@{
+    ViewData["Title"] = "Rezerviši termin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var terminPredmeti = ViewBag.TerminPredmeti as Dictionary<int, string>
+                         ?? new Dictionary<int, string>();
+}
+
+<style>
+    .rez-wrapper {
+        max-width: 700px;
+        margin: 48px auto;
+        padding: 0 24px;
+    }
+
+    .rez-card {
+        background: #c8dce8;
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+    }
+
+    .rez-cijena-label {
+        font-weight: 700;
+        font-size: 1.1rem;
+        margin-bottom: 4px;
+    }
+
+    .rez-cijena-iznos {
+        font-weight: 800;
+        font-size: 2.2rem;
+        margin-bottom: 40px;
+    }
+
+    .rez-sekcija-label {
+        font-weight: 600;
+        margin-bottom: 14px;
+    }
+
+    .termini-lista {
+        background: #b8d0dc;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 32px;
+    }
+
+    .termin-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 20px;
+        border-bottom: 1px solid #a0bcc8;
+        cursor: pointer;
+        transition: background 0.15s;
+        gap: 12px;
+    }
+
+        .termin-row:last-child {
+            border-bottom: none;
+        }
+
+        .termin-row.odabran {
+            background: #8fc8d8;
+        }
+
+        .termin-row input[type="radio"] {
+            display: none;
+        }
+
+    .termin-lijevo {
+        text-align: left;
+    }
+
+    .termin-naziv {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: #0d2d45;
+    }
+
+    .termin-predmet {
+        font-size: 0.82rem;
+        color: #444;
+        font-weight: 400;
+        margin-top: 2px;
+    }
+
+    .termin-desno {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex-shrink: 0;
+    }
+
+    .termin-datum-tekst {
+        color: #555;
+        font-size: 0.9rem;
+    }
+
+    .tip-badge {
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 3px 10px;
+        border-radius: 20px;
+        white-space: nowrap;
+    }
+
+    .tip-online {
+        background: #d0f0e0;
+        color: #1a7a40;
+    }
+
+    .tip-uzivo {
+        background: #fde8c8;
+        color: #9a5000;
+    }
+
+    .tip-hibridno {
+        background: #e8d8f8;
+        color: #6a00c8;
+    }
+
+    .hibridno-izbor {
+        display: none;
+        background: #e8f4fb;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 24px;
+    }
+
+        .hibridno-izbor.vidljiv {
+            display: block;
+        }
+
+    .tip-btns {
+        display: flex;
+        gap: 14px;
+        justify-content: center;
+        margin-top: 12px;
+    }
+
+    .tip-btn {
+        padding: 12px 32px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        cursor: pointer;
+        border: 2px solid transparent;
+        transition: all 0.15s;
+    }
+
+        .tip-btn.online-btn {
+            background: #0d4f8a;
+            color: white;
+        }
+
+        .tip-btn.uzivo-btn {
+            background: #555;
+            color: white;
+        }
+
+        .tip-btn.odabran {
+            outline: 3px solid #0d2d45;
+        }
+
+    .rezime-box {
+        display: none;
+        background: white;
+        border-radius: 12px;
+        padding: 24px;
+        margin-bottom: 24px;
+        text-align: left;
+    }
+
+        .rezime-box.vidljiv {
+            display: block;
+        }
+
+    .rezime-naslov {
+        font-weight: 800;
+        font-size: 1.2rem;
+        text-align: center;
+        margin-bottom: 4px;
+    }
+
+    .rezime-podnaslov {
+        color: #888;
+        text-align: center;
+        margin-bottom: 16px;
+        font-size: 0.9rem;
+    }
+
+    .rezime-red {
+        display: flex;
+        justify-content: space-between;
+        padding: 8px 0;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+        .rezime-red:last-child {
+            border-bottom: none;
+            font-weight: 700;
+        }
+
+    .btn-potvrdi {
+        background: #4caf8a;
+        color: white;
+        border: none;
+        padding: 16px 56px;
+        border-radius: 10px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        cursor: pointer;
+        transition: opacity 0.2s;
+    }
+
+        .btn-potvrdi:hover {
+            opacity: 0.85;
+        }
+
+        .btn-potvrdi:disabled {
+            opacity: 0.45;
+            cursor: not-allowed;
+        }
+</style>
+
+<div class="rez-wrapper">
+    <div class="rez-card">
+
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger mb-4">@TempData["Greska"]</div>
+        }
+
+        <div class="rez-cijena-label">Cijena instrukcija:</div>
+        <div class="rez-cijena-iznos">@(((double)(Model.Tutor.CijenaPoSatu ?? 0)).ToString("0.##")) KM / h</div>
+
+        @if (Model.DostupniTermini.Any())
+        {
+            <form asp-action="RezervisiTermin" asp-controller="Tutor" method="post" id="rezervacijaForm">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="tutorId" value="@Model.Tutor.Id" />
+                <input type="hidden" name="predmetId" id="predmetIdSend" value="" />
+                <input type="hidden" name="tipInstrukcija" id="tipInstrukcijaSend" value="" />
+
+                <!-- TERMINI -->
+                <p class="rez-sekcija-label">Odaberi jedan od dostupnih termina:</p>
+                <div class="termini-lista">
+                    @foreach (var termin in Model.DostupniTermini)
+                    {
+                        string badgeClass = termin.tipInstrukcija switch
+                        {
+                            TipInstrukcija.Online => "tip-online",
+                            TipInstrukcija.Uzivo => "tip-uzivo",
+                            TipInstrukcija.Hibridno => "tip-hibridno",
+                            _ => "tip-online"
+                        };
+                        string tipTekst = termin.tipInstrukcija switch
+                        {
+                            TipInstrukcija.Online => "Online",
+                            TipInstrukcija.Uzivo => "Uživo",
+                            TipInstrukcija.Hibridno => "Hibridno",
+                            _ => ""
+                        };
+                        string nazivPredmeta = terminPredmeti.ContainsKey(termin.id)
+                            ? terminPredmeti[termin.id] : "";
+
+                        <label class="termin-row"
+                               data-tip="@termin.tipInstrukcija"
+                               data-predmetid="@termin.idPredmeta"
+                               data-predmet="@nazivPredmeta"
+                               data-datum="@termin.datumIVrijeme.ToString("dd.MM.yyyy. HH:mm")">
+                            <input type="radio" name="terminId" value="@termin.id" class="termin-radio" required />
+                            <span class="termin-lijevo">
+                                <div class="termin-naziv">@termin.datumIVrijeme.ToString("HH:mm")</div>
+                                @if (!string.IsNullOrEmpty(nazivPredmeta))
+                                {
+                                    <div class="termin-predmet">@nazivPredmeta</div>
+                                }
+                            </span>
+                            <span class="termin-desno">
+                                <span class="termin-datum-tekst">@termin.datumIVrijeme.ToString("dd.MM.yyyy.")</span>
+                                <span class="tip-badge @badgeClass">@tipTekst</span>
+                            </span>
+                        </label>
+                    }
+                </div>
+
+                <!-- HIBRIDNO IZBOR -->
+                <div class="hibridno-izbor" id="hibridnoIzbor">
+                    <p class="rez-sekcija-label">Ovaj termin je hibridni — odaberi način prisustva:</p>
+                    <div class="tip-btns">
+                        <button type="button" class="tip-btn online-btn" onclick="odaberiHibridnoTip('Online', this)">Online</button>
+                        <button type="button" class="tip-btn uzivo-btn" onclick="odaberiHibridnoTip('Uzivo', this)">Uživo</button>
+                    </div>
+                </div>
+
+                <!-- REZIME -->
+                <div class="rezime-box" id="rezime">
+                    <div class="rezime-naslov">Rezime &amp; Cijena</div>
+                    <div class="rezime-podnaslov">Pregledajte i potvrdite izbor.</div>
+                    <div class="rezime-red"><span>Odabrani termin</span><strong id="rTermin">—</strong></div>
+                    <div class="rezime-red"><span>Predmet</span><strong id="rPredmet">—</strong></div>
+                    <div class="rezime-red"><span>Tutor</span><strong>@Model.Tutor.Ime @Model.Tutor.Prezime</strong></div>
+                    <div class="rezime-red"><span>Način</span><strong id="rTip">—</strong></div>
+                    <div class="rezime-red"><span>Ukupna cijena</span><strong>@(((double)(Model.Tutor.CijenaPoSatu ?? 0)).ToString("0.##")) KM</strong></div>
+                </div>
+
+                <button type="submit" class="btn-potvrdi" id="btnPotvrdi" disabled>Potvrdi</button>
+            </form>
+        }
+        else
+        {
+            <p style="color:#555;">Trenutno nema dostupnih termina za ovog tutora.</p>
+            <a asp-controller="Tutor" asp-action="Profil" asp-route-id="@Model.Tutor.Id"
+               style="color:#0d4f8a; font-weight:600;">← Nazad na profil</a>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let odabraniTip = null;
+        let jeHibridno = false;
+        let hibridniIzbor = null;
+
+        document.querySelectorAll('.termin-radio').forEach(r => {
+            r.addEventListener('change', function () {
+                document.querySelectorAll('.termin-row').forEach(l => l.classList.remove('odabran'));
+                this.closest('label').classList.add('odabran');
+
+                const tip = this.closest('label').dataset.tip;
+                jeHibridno = (tip === 'Hibridno');
+                hibridniIzbor = null;
+
+                if (jeHibridno) {
+                    document.getElementById('hibridnoIzbor').classList.add('vidljiv');
+                    document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('odabran'));
+                    odabraniTip = null;
+                    document.getElementById('tipInstrukcijaSend').value = '';
+                } else {
+                    document.getElementById('hibridnoIzbor').classList.remove('vidljiv');
+                    odabraniTip = tip;
+                    document.getElementById('tipInstrukcijaSend').value = tip;
+                }
+
+                azurirajRezime();
+            });
+        });
+
+        function odaberiHibridnoTip(tip, btn) {
+            hibridniIzbor = tip;
+            odabraniTip = tip;
+            document.getElementById('tipInstrukcijaSend').value = tip;
+            document.querySelectorAll('.tip-btn').forEach(b => b.classList.remove('odabran'));
+            btn.classList.add('odabran');
+            azurirajRezime();
+        }
+
+        function azurirajRezime() {
+            const terminRadio = document.querySelector('.termin-radio:checked');
+            const tipOk = jeHibridno ? (hibridniIzbor !== null) : (odabraniTip !== null);
+            const sve = terminRadio && tipOk;
+
+            if (terminRadio) {
+                const lbl = terminRadio.closest('label');
+                document.getElementById('predmetIdSend').value = lbl.dataset.predmetid || '';
+                document.getElementById('rTermin').textContent = lbl.dataset.datum;
+                document.getElementById('rPredmet').textContent = lbl.dataset.predmet || '—';
+
+                let tipPrikaz = odabraniTip;
+                if (tipPrikaz === 'Uzivo') tipPrikaz = 'Uživo';
+                if (tipPrikaz === 'Hibridno') tipPrikaz = 'Hibridno';
+                document.getElementById('rTip').textContent = tipPrikaz ?? '—';
+
+                document.getElementById('rezime').classList.add('vidljiv');
+            }
+
+            document.getElementById('btnPotvrdi').disabled = !sve;
+        }
+    </script>
+}

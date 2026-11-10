@@ -1,0 +1,195 @@
+﻿@model Earn_Learn.Models.TutorProfilViewModel
+
+@inject Microsoft.AspNetCore.Identity.UserManager<Earn_Learn.Models.Korisnik> UserManager
+@{
+    ViewData["Title"] = $"Recenzije – {Model.Tutor.Ime} {Model.Tutor.Prezime}";
+    var trenutniKorisnik = await UserManager.GetUserAsync(User);
+    bool jeTutor = trenutniKorisnik?.Uloga == Earn_Learn.Enums.Uloga.Tutor && trenutniKorisnik?.Id == Model.Tutor.Id;
+    bool jeAdmin = trenutniKorisnik?.Uloga == Earn_Learn.Enums.Uloga.SystemManager;
+}
+
+@* ADMIN POPUP – blokira ostavljanje recenzije *@
+@if (jeAdmin)
+{
+    <div id="adminRecenzijaPopup" style="
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.55); z-index: 9999;
+        display: flex; align-items: center; justify-content: center;">
+        <div style="
+            background: #fff; border-radius: 16px; padding: 40px 36px;
+            max-width: 420px; width: 90%; text-align: center;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.22);">
+            <div style="font-size: 52px; margin-bottom: 14px;">🚫</div>
+            <div style="font-size: 1.25rem; font-weight: 800; color: #c00; margin-bottom: 10px;">
+                Zabranjeno ostavljanje recenzije
+            </div>
+            <div style="font-size: 0.95rem; color: #555; margin-bottom: 28px; line-height: 1.6;">
+                Administratori nemaju pravo ostavljati recenzije tutorima.
+            </div>
+            <a asp-controller="Tutor" asp-action="Profil" asp-route-id="@Model.Tutor.Id"
+               style="background: #0d2d45; color: #fff; padding: 11px 28px;
+                border-radius: 8px; font-weight: 700; text-decoration: none; font-size: 0.95rem;">
+                ← Nazad na profil
+            </a>
+        </div>
+    </div>
+}
+
+<div style="background:white; min-height:100vh; padding:48px 0;">
+    <div class="container" style="max-width:800px; margin:auto; padding:0 24px; text-align:center;">
+
+        @if (TempData["Uspjeh"] != null)
+        {
+            <div class="alert alert-success">@TempData["Uspjeh"]</div>
+        }
+        @if (TempData["Greska"] != null)
+        {
+            <div class="alert alert-danger">@TempData["Greska"]</div>
+        }
+
+        <!-- STATS -->
+        @if (Model.UkupnoRecenzija > 0)
+        {
+            <div style="display:flex; gap:48px; justify-content:center; margin-bottom:48px; flex-wrap:wrap; align-items:center;">
+                <div>
+                    <div style="font-size:3.5rem; font-weight:800; line-height:1;">@Model.ProsjecnaOcjena.ToString("F1")</div>
+                    <div style="color:#777; margin-top:4px;">@Model.Tutor.Ime @Model.Tutor.Prezime</div>
+                </div>
+                <div>
+                    <div style="font-size:3rem; color:#111; line-height:1;">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span>★</span>
+                        }
+                    </div>
+                    <div style="color:#777; margin-top:4px;">Prosječna ocjena</div>
+                </div>
+                <div>
+                    <div style="font-size:3.5rem; font-weight:800; line-height:1;">@Model.UkupnoRecenzija</div>
+                    <div style="color:#777; margin-top:4px;">Ukupno ocjena</div>
+                </div>
+            </div>
+        }
+
+        <!-- RECENZIJE -->
+        <h2 style="font-weight:700; font-size:1.8rem; margin-bottom:8px;">Recenzije studenata</h2>
+        <p style="color:#777; margin-bottom:32px;">Iskustva onih koji su radili s tutorom</p>
+
+        @if (Model.Recenzije.Any())
+        {
+            <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:16px; margin-bottom:32px;">
+                @foreach (var rec in Model.Recenzije)
+                {
+                    <div style="background:#f5f5f5; border-radius:12px; padding:20px; text-align:left;">
+                        <div style="color:#f5c518; margin-bottom:8px;">
+                            @for (int i = 1; i <= 5; i++)
+                            {
+                                <span>@(i <= rec.Recenzija.ocjena ? "★" : "☆")</span>
+                            }
+                        </div>
+                        <p style="color:#333; margin-bottom:16px;">@rec.Recenzija.komentar</p>
+                        <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-top:8px;">
+                            <div>
+                                <strong>@rec.ImeStudenta</strong>
+                                <br /><small style="color:#888;">Student</small>
+                            </div>
+                            @if (jeTutor)
+                            {
+                                <button onclick="togglePrijavaRec(@rec.Recenzija.id)"
+                                        style="background:transparent; border:1px solid #e55; color:#e55; border-radius:12px; padding:4px 12px; font-size:.78rem; font-weight:700; cursor:pointer;">
+                                    ⚠ Prijavi
+                                </button>
+                            }
+                        </div>
+                        @if (jeTutor)
+                        {
+                            <div id="prijava-rec-@rec.Recenzija.id" style="display:none; margin-top:12px; border-top:1px solid #eee; padding-top:12px;">
+                                <form asp-controller="Student" asp-action="PrijaviRecenziju" method="post">
+                                    @Html.AntiForgeryToken()
+                                    <input type="hidden" name="recenzijaId" value="@rec.Recenzija.id" />
+                                    <input type="hidden" name="tutorId" value="@Model.Tutor.Id" />
+                                    <input type="text" name="naslov" required placeholder="Naslov prijave" maxlength="100"
+                                           style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px; margin-bottom:6px; box-sizing:border-box; font-size:.85rem;" />
+                                    <textarea name="opis" rows="2" required placeholder="Opiši razlog prijave..." maxlength="500"
+                                              style="width:100%; padding:8px; border:1px solid #ddd; border-radius:6px; resize:none; box-sizing:border-box; font-size:.85rem;"></textarea>
+                                    <button type="submit"
+                                            style="margin-top:6px; background:#e55; color:#fff; border:none; border-radius:12px; padding:6px 16px; font-weight:700; font-size:.82rem; cursor:pointer;">
+                                        Pošalji prijavu
+                                    </button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p style="color:#999; margin-bottom:32px;">Još nema recenzija za ovog tutora.</p>
+        }
+
+        <!-- FORMA ZA RECENZIJU (sakrivena za admina) -->
+        @if (!jeAdmin)
+        {
+            <div style="border-top:1px solid #eee; padding-top:40px; margin-top:16px;">
+                <h2 style="font-weight:700; font-size:1.6rem; margin-bottom:8px;">Ostavi recenziju</h2>
+                <p style="color:#777; margin-bottom:24px;">Podijeli svoje iskustvo s ovim tutorom...</p>
+
+                <form asp-action="OstaviRecenziju" asp-controller="Student" method="post" style="max-width:480px; margin:auto;">
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" name="tutorId" value="@Model.Tutor.Id" />
+
+                    <div style="font-size:2.2rem; margin-bottom:16px;" id="zvjezdice">
+                        @for (int i = 1; i <= 5; i++)
+                        {
+                            <span class="zvijezda" data-val="@i" style="cursor:pointer; color:#ccc;">★</span>
+                        }
+                    </div>
+                    <input type="hidden" name="ocjena" id="ocjenaInput" value="0" />
+
+                    <div style="margin-bottom:16px; text-align:left;">
+                        <label style="font-weight:600; display:block; margin-bottom:6px;">Komentar</label>
+                        <textarea name="komentar" rows="4" placeholder="Napiši komentar..."
+                                  style="width:100%; padding:12px; border:1px solid #ddd; border-radius:8px; background:#f0f0f0; resize:none; font-size:0.95rem;"></textarea>
+                    </div>
+
+                    <button type="submit"
+                            style="background:white; color:#4caf8a; border:2px solid #4caf8a; padding:12px 40px; border-radius:20px; font-weight:700; cursor:pointer; font-size:1rem;">
+                        Objavi recenziju
+                    </button>
+                </form>
+            </div>
+        }
+
+        <!-- Nazad na profil -->
+        <div style="margin-top:40px;">
+            <a asp-controller="Tutor" asp-action="Profil" asp-route-id="@Model.Tutor.Id"
+               style="color:#0d4f8a; font-weight:600; text-decoration:none;">← Nazad na profil</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function togglePrijavaRec(id) {
+            var el = document.getElementById('prijava-rec-' + id);
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('.zvijezda').forEach(z => {
+            z.addEventListener('mouseover', function () {
+                const val = parseInt(this.dataset.val);
+                document.querySelectorAll('.zvijezda').forEach((s, i) => {
+                    s.style.color = i < val ? '#f5c518' : '#ccc';
+                });
+            });
+            z.addEventListener('click', function () {
+                const val = parseInt(this.dataset.val);
+                document.getElementById('ocjenaInput').value = val;
+                document.querySelectorAll('.zvijezda').forEach((s, i) => {
+                    s.style.color = i < val ? '#f5c518' : '#ccc';
+                });
+            });
+        });
+    </script>
+}
