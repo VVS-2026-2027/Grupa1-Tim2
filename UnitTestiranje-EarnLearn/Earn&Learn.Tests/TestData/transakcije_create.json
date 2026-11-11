@@ -1,0 +1,23 @@
+﻿[
+  {
+    "idStudenta": "s1",
+    "idTutora": "t1",
+    "iznos": 25.5,
+    "nacinPlacanja": 0,
+    "statusPlacanja": 0
+  },
+  {
+    "idStudenta": "s2",
+    "idTutora": "t2",
+    "iznos": 100,
+    "nacinPlacanja": 1,
+    "statusPlacanja": 1
+  },
+  {
+    "idStudenta": "s3",
+    "idTutora": "t1",
+    "iznos": 0,
+    "nacinPlacanja": 1,
+    "statusPlacanja": 0
+  }
+]

@@ -3,6 +3,9 @@ using Earn_Learn.Data;
 using Earn_Learn.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Earn_Learn.Enums;
+using System.Globalization;
+using System.Text.Json;
 
 namespace Earn_Learn.Tests
 {
@@ -315,6 +318,98 @@ namespace Earn_Learn.Tests
             Assert.AreEqual("Index", result.ActionName);
             using var provjera = new ApplicationDbContext(opcije);
             Assert.AreEqual(1, provjera.Transakcija.Count());
+        }
+
+
+        // ---------- Data driven: JSON ----------
+
+        private record TransakcijaPodaci(
+            string IdStudenta, string IdTutora, double Iznos, int NacinPlacanja, int StatusPlacanja);
+
+        public static IEnumerable<object[]> TransakcijeIzJsona()
+        {
+            var putanja = Path.Combine(AppContext.BaseDirectory, "TestData", "transakcije_create.json");
+            var podaci = JsonSerializer.Deserialize<List<TransakcijaPodaci>>(
+                File.ReadAllText(putanja),
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+            return podaci.Select(p => new object[]
+                { p.IdStudenta, p.IdTutora, p.Iznos, p.NacinPlacanja, p.StatusPlacanja });
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(TransakcijeIzJsona))]
+        public async Task Create_RazliciteTransakcijeIzJsona_SpremaTacnePodatke(
+            string idStudenta, string idTutora, double iznos, int nacinPlacanja, int statusPlacanja)
+        {
+            var opcije = NapraviOpcije();
+            using var baza = new ApplicationDbContext(opcije);
+            var controller = new TransakcijasController(baza);
+            var transakcija = new Transakcija
+            {
+                id = 1,
+                idStudenta = idStudenta,
+                idTutora = idTutora,
+                iznos = iznos,
+                datumUplate = new DateTime(2026, 11, 1),
+                nacinPlacanja = (NacinPlacanja)nacinPlacanja,
+                statusPlacanja = (StatusPlacanja)statusPlacanja
+            };
+
+            var result = await controller.Create(transakcija) as RedirectToActionResult;
+
+            Assert.IsNotNull(result);
+            using var provjera = new ApplicationDbContext(opcije);
+            var spremljena = provjera.Transakcija.Single();
+            Assert.AreEqual(idStudenta, spremljena.idStudenta);
+            Assert.AreEqual(idTutora, spremljena.idTutora);
+            Assert.AreEqual(iznos, spremljena.iznos);
+            Assert.AreEqual((NacinPlacanja)nacinPlacanja, spremljena.nacinPlacanja);
+            Assert.AreEqual((StatusPlacanja)statusPlacanja, spremljena.statusPlacanja);
+        }
+
+        // ---------- Data driven: CSV ----------
+
+        public static IEnumerable<object[]> IznosiIzCsv()
+        {
+            var putanja = Path.Combine(AppContext.BaseDirectory, "TestData", "transakcije_edit.csv");
+            return File.ReadAllLines(putanja)
+                .Skip(1)
+                .Select(red => red.Split(','))
+                .Select(k => new object[]
+                {
+                    double.Parse(k[0], CultureInfo.InvariantCulture),
+                    double.Parse(k[1], CultureInfo.InvariantCulture),
+                    int.Parse(k[2])
+                });
+        }
+
+        [TestMethod]
+        [DynamicData(nameof(IznosiIzCsv))]
+        public async Task Edit_NoviIznosIStatusIzCsv_AzuriraTransakciju(
+            double pocetniIznos, double noviIznos, int noviStatus)
+        {
+            var opcije = NapraviOpcije();
+            using (var priprema = new ApplicationDbContext(opcije))
+            {
+                priprema.Transakcija.Add(new Transakcija { id = 1, iznos = pocetniIznos });
+                priprema.SaveChanges();
+            }
+            using var baza = new ApplicationDbContext(opcije);
+            var controller = new TransakcijasController(baza);
+            var izmijenjena = new Transakcija
+            {
+                id = 1,
+                iznos = noviIznos,
+                statusPlacanja = (StatusPlacanja)noviStatus
+            };
+
+            var result = await controller.Edit(1, izmijenjena) as RedirectToActionResult;
+
+            Assert.IsNotNull(result);
+            using var provjera = new ApplicationDbContext(opcije);
+            var azurirana = provjera.Transakcija.Single();
+            Assert.AreEqual(noviIznos, azurirana.iznos);
+            Assert.AreEqual((StatusPlacanja)noviStatus, azurirana.statusPlacanja);
         }
     }
 }
