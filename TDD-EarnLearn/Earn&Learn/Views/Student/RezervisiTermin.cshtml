@@ -1,0 +1,67 @@
+﻿@model Earn_Learn.Models.Termin
+@using Earn_Learn.Enums
+@{
+    ViewData["Title"] = "Rezerviši termin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var tutor = ViewBag.Tutor as Earn_Learn.Models.Korisnik;
+    var predmet = ViewBag.Predmet as Earn_Learn.Models.Predmet;
+    bool jeHibridno = Model.tipInstrukcija == TipInstrukcija.Hibridno;
+}
+
+<div class="container mt-5" style="max-width:600px;">
+    <h4 class="fw-bold mb-4">Rezerviši termin</h4>
+
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert alert-danger">@TempData["Greska"]</div>
+    }
+
+    <div style="background:#f4f6fa; border-radius:12px; padding:20px; margin-bottom:24px;">
+        <p><strong>Tutor:</strong> @tutor?.Ime @tutor?.Prezime</p>
+        <p><strong>Predmet:</strong> @(predmet?.naziv ?? "—")</p>
+        <p><strong>Datum i vrijeme:</strong> @Model.datumIVrijeme.ToString("dd.MM.yyyy. HH:mm")</p>
+        <p><strong>Cijena:</strong> @Model.cijena KM/h</p>
+    </div>
+
+    <form asp-controller="Rezervacija" asp-action="Potvrdi"
+          asp-route-id="@Model.id" method="post">
+        @Html.AntiForgeryToken()
+
+        @if (jeHibridno)
+        {
+            <!-- Tutor nudi i online i uživo — student bira -->
+            <div class="mb-4">
+                <label class="form-label fw-semibold">Način izvođenja:</label>
+                <div class="d-flex gap-3">
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                               name="tipInstrukcija" value="Online"
+                               id="tipOnline" checked />
+                        <label class="form-check-label" for="tipOnline">Online</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="radio"
+                               name="tipInstrukcija" value="Uzivo"
+                               id="tipUzivo" />
+                        <label class="form-check-label" for="tipUzivo">Uživo</label>
+                    </div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Tip je već fiksiran — samo ga proslijedi skrivenim poljem -->
+            <input type="hidden" name="tipInstrukcija" value="@Model.tipInstrukcija" />
+            <div class="mb-4">
+                <span class="fw-semibold">Način izvođenja: </span>
+                <span style="color:#0d2d45; font-weight:600;">
+                    @(Model.tipInstrukcija == TipInstrukcija.Online ? "Online" : "Uživo")
+                </span>
+            </div>
+        }
+
+        <button type="submit" class="btn btn-success w-100 fw-bold">
+            Potvrdi rezervaciju
+        </button>
+    </form>
+</div>

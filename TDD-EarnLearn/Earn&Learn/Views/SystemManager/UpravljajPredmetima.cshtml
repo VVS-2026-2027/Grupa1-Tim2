@@ -1,0 +1,215 @@
+﻿@model IEnumerable<Earn_Learn.Models.Predmet>
+@{
+    ViewData["Title"] = "Upravljaj predmetima";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int prikaziPredmeta = 6;
+    var listaPredmeta = Model.ToList();
+}
+
+<style>
+    * { font-family: 'Nunito', sans-serif; }
+
+    .up-stats {
+        display: flex;
+        justify-content: center;
+        gap: 100px;
+        padding: 50px 20px 30px;
+        text-align: center;
+    }
+    .up-stat .broj  { font-size: 3rem; font-weight: 800; color: #0d2d45; line-height: 1; }
+    .up-stat .label { font-size: .95rem; color: #888; margin-top: 6px; }
+
+    .up-wrap { max-width: 900px; margin: 0 auto 60px; padding: 0 20px; }
+
+    /* List rows */
+    .up-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 11px 0;
+        border-bottom: 1px solid #f5f5f5;
+        gap: 12px;
+    }
+    .up-row:last-child { border-bottom: none; }
+
+    .up-naziv {
+        font-size: .95rem;
+        font-weight: 700;
+        color: #222;
+        flex: 1;
+    }
+    .up-info {
+        font-size: .88rem;
+        color: #888;
+        min-width: 120px;
+    }
+
+    .up-actions { display: flex; gap: 6px; align-items: center; }
+
+    .btn-uredi {
+        background: #e8f5e9; color: #2e7d32;
+        border: none; border-radius: 8px;
+        padding: 5px 12px; font-size: .78rem; font-weight: 700;
+        cursor: pointer; transition: background .2s;
+    }
+    .btn-uredi:hover { background: #c8e6c9; }
+
+    .btn-obrisi {
+        background: #ffe5e5; color: #c0392b;
+        border: none; border-radius: 8px;
+        padding: 5px 12px; font-size: .78rem; font-weight: 700;
+        cursor: pointer; transition: background .2s;
+    }
+    .btn-obrisi:hover { background: #ffcccc; }
+
+    .btn-prikazi-sve {
+        display: block;
+        margin: 16px auto 24px;
+        background: #0d2d45; color: #fff;
+        border: none; border-radius: 20px;
+        padding: 8px 28px; font-size: .88rem; font-weight: 700;
+        cursor: pointer; transition: opacity .2s;
+    }
+    .btn-prikazi-sve:hover { opacity: .85; }
+
+    .btn-dodaj-novi {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 10px auto 0;
+        background: none;
+        border: 1.5px dashed #bbb;
+        border-radius: 10px;
+        padding: 10px 28px;
+        font-size: .92rem;
+        font-weight: 700;
+        color: #555;
+        cursor: pointer;
+        transition: border-color .2s, color .2s;
+        width: fit-content;
+    }
+    .btn-dodaj-novi:hover { border-color: #5bc400; color: #5bc400; }
+
+    /* Modal */
+    .modal-overlay {
+        display: none; position: fixed; inset: 0;
+        background: rgba(0,0,0,.45); z-index: 1000;
+        align-items: center; justify-content: center;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-box {
+        background: #fff; border-radius: 16px;
+        padding: 36px 40px; width: 100%; max-width: 440px;
+        box-shadow: 0 8px 40px rgba(0,0,0,.18);
+    }
+    .modal-box h3 { font-size: 1.3rem; font-weight: 800; color: #0d2d45; margin-bottom: 18px; }
+    .modal-box input[type=text] {
+        width: 100%; border: 1.5px solid #ddd; border-radius: 10px;
+        padding: 10px 14px; font-size: .95rem; outline: none; margin-bottom: 18px;
+        box-sizing: border-box;
+    }
+    .modal-box input:focus { border-color: #5bc400; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn-cancel { background: #f0f0f0; color: #555; border: none; border-radius: 10px; padding: 9px 20px; font-weight: 700; cursor: pointer; }
+    .btn-save   { background: #5bc400; color: #fff; border: none; border-radius: 10px; padding: 9px 20px; font-weight: 700; cursor: pointer; }
+</style>
+
+<div class="up-stats">
+    <div class="up-stat">
+        <div class="broj">@ViewBag.UkupnoPredmeta</div>
+        <div class="label">Dostupni predmeti</div>
+    </div>
+    <div class="up-stat">
+        <div class="broj">@ViewBag.NovihPredmeta</div>
+        <div class="label">Novi predmeti</div>
+    </div>
+</div>
+
+<div class="up-wrap">
+    <div id="lista-predmeta">
+        @for (int i = 0; i < listaPredmeta.Count; i++)
+        {
+            var p = listaPredmeta[i];
+            var brojTutora = (ViewBag.BrojTutoraPoP as Dictionary<int, int>)?.GetValueOrDefault(p.id, 0) ?? 0;
+            <div class="up-row" style="@(i >= prikaziPredmeta ? "display:none;" : "")">
+                <span class="up-naziv">Predmet: @p.naziv</span>
+                <span class="up-info">Broj tutora: @brojTutora</span>
+                <div class="up-actions">
+                    <button class="btn-uredi"
+                            onclick="otvoriUredi(@p.id, '@Html.Raw(p.naziv.Replace("'", "\\'"))')">
+                        ✏ uredi
+                    </button>
+                    <form asp-action="ObrisiPredmet" method="post" style="display:inline;"
+                          onsubmit="return confirm('Obrisati predmet @p.naziv?')">
+                        <input type="hidden" name="id" value="@p.id" />
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-obrisi">🗑 obriši</button>
+                    </form>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (listaPredmeta.Count > prikaziPredmeta)
+    {
+        <button class="btn-prikazi-sve" onclick="prikaziSve(this)">Prikaži sve</button>
+    }
+
+    <button class="btn-dodaj-novi" onclick="otvoriModal('dodaj')">
+        + Dodaj novi predmet
+    </button>
+</div>
+
+<!-- Modal: Dodaj -->
+<div class="modal-overlay" id="modal-dodaj">
+    <div class="modal-box">
+        <h3>Dodaj novi predmet</h3>
+        <form asp-action="DodajPredmet" method="post">
+            @Html.AntiForgeryToken()
+            <input type="text" name="naziv" placeholder="Naziv predmeta" required />
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="zatvoriModal('dodaj')">Odustani</button>
+                <button type="submit" class="btn-save">Dodaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal: Uredi -->
+<div class="modal-overlay" id="modal-uredi">
+    <div class="modal-box">
+        <h3>Uredi predmet</h3>
+        <form asp-action="UrediPredmet" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" id="uredi-id" name="id" />
+            <input type="text" id="uredi-naziv" name="naziv" placeholder="Naziv predmeta" required />
+            <div class="modal-actions">
+                <button type="button" class="btn-cancel" onclick="zatvoriModal('uredi')">Odustani</button>
+                <button type="submit" class="btn-save">Sačuvaj</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    function prikaziSve(btn) {
+        document.querySelectorAll('#lista-predmeta .up-row').forEach(r => r.style.display = '');
+        btn.style.display = 'none';
+    }
+    function otvoriModal(tip) {
+        document.getElementById('modal-' + tip).classList.add('active');
+    }
+    function zatvoriModal(tip) {
+        document.getElementById('modal-' + tip).classList.remove('active');
+    }
+    function otvoriUredi(id, naziv) {
+        document.getElementById('uredi-id').value = id;
+        document.getElementById('uredi-naziv').value = naziv;
+        otvoriModal('uredi');
+    }
+    document.querySelectorAll('.modal-overlay').forEach(el => {
+        el.addEventListener('click', e => { if (e.target === el) el.classList.remove('active'); });
+    });
+</script>
+}

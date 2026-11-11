@@ -1,0 +1,889 @@
+﻿<!DOCTYPE html>
+<html lang="bs">
+@inject Microsoft.AspNetCore.Identity.UserManager<Earn_Learn.Models.Korisnik> UserManager
+@using Microsoft.AspNetCore.Identity
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Earn&amp;Learn</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="icon" type="image/png" href="~/images/Logo.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+            * {
+                font-family: 'Nunito', sans-serif;
+            }
+
+            .el-navbar {
+                background: #fff;
+                padding: 8px 40px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                border-bottom: 1px solid #eee;
+                position: sticky;
+                top: 0;
+                z-index: 999;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            }
+
+                .el-navbar .brand img {
+                    height: 90px;
+                    width: auto;
+                    mix-blend-mode: multiply;
+                }
+
+            .el-nav-links {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+
+                .el-nav-links a.nav-text {
+                    color: #333;
+                    text-decoration: none;
+                    font-weight: 600;
+                    padding: 6px 14px;
+                    border-radius: 20px;
+                    transition: background .2s;
+                }
+
+                    .el-nav-links a.nav-text:hover {
+                        background: #f0f0f0;
+                    }
+
+            .btn-prijava {
+                background: #0d2d45;
+                color: #fff !important;
+                border-radius: 20px;
+                padding: 7px 20px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: opacity .2s;
+            }
+
+                .btn-prijava:hover {
+                    opacity: .85;
+                }
+
+            .btn-registracija {
+                background: #5bc400;
+                color: #fff !important;
+                border-radius: 20px;
+                padding: 7px 20px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: opacity .2s;
+            }
+
+                .btn-registracija:hover {
+                    opacity: .85;
+                }
+
+            .btn-student-dash {
+                background: none;
+                border: 2px solid #5bc400;
+                color: #5bc400 !important;
+                border-radius: 20px;
+                padding: 5px 16px;
+                font-weight: 700;
+                text-decoration: none;
+                transition: all .2s;
+                font-size: .88rem;
+            }
+
+                .btn-student-dash:hover {
+                    background: #5bc400;
+                    color: #fff !important;
+                }
+
+            .el-footer {
+                background: #fff;
+                border-top: 1px solid #eee;
+                padding: 50px 60px 30px;
+                margin-top: 0;
+            }
+
+                .el-footer .footer-inner {
+                    display: flex;
+                    justify-content: flex-end;
+                    gap: 80px;
+                    align-items: flex-start;
+                }
+
+                .el-footer .footer-logo-side {
+                    margin-right: auto;
+                }
+
+                    .el-footer .footer-logo-side img {
+                        height: 140px;
+                        width: auto;
+                        mix-blend-mode: multiply;
+                    }
+
+                .el-footer .footer-col h6 {
+                    font-weight: 800;
+                    color: #0d2d45;
+                    margin-bottom: 10px;
+                    font-size: .95rem;
+                }
+
+                .el-footer .footer-col a {
+                    display: block;
+                    color: #666;
+                    text-decoration: none;
+                    font-size: .9rem;
+                    margin-bottom: 5px;
+                    transition: color .2s;
+                }
+
+                    .el-footer .footer-col a:hover {
+                        color: #5bc400;
+                    }
+
+                .el-footer .footer-bottom {
+                    text-align: center;
+                    color: #aaa;
+                    font-size: .82rem;
+                    margin-top: 30px;
+                    border-top: 1px solid #f0f0f0;
+                    padding-top: 18px;
+                }
+
+            body {
+                margin: 0;
+                padding: 0;
+                background: #fff;
+            }
+
+            /* ── NOTIFIKACIJE ZVONIK ── */
+            .notif-wrapper {
+                position: relative;
+                display: inline-flex;
+                align-items: center;
+            }
+
+            .notif-btn {
+                background: none;
+                border: none;
+                cursor: pointer;
+                position: relative;
+                padding: 6px 8px;
+                color: #333;
+                border-radius: 50%;
+                transition: background .2s;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .notif-btn:hover {
+                    background: #f0f0f0;
+                }
+
+            .notif-badge {
+                display: none;
+                position: absolute;
+                top: 2px;
+                right: 2px;
+                background: #e53935;
+                color: white;
+                border-radius: 50%;
+                font-size: 10px;
+                font-weight: 700;
+                min-width: 17px;
+                height: 17px;
+                line-height: 17px;
+                text-align: center;
+                padding: 0 3px;
+                font-family: 'Nunito', sans-serif;
+                border: 2px solid #fff;
+            }
+
+            .notif-dropdown {
+                display: none;
+                position: absolute;
+                right: 0;
+                top: calc(100% + 8px);
+                width: 330px;
+                background: white;
+                border: 1px solid #e8e8e8;
+                border-radius: 12px;
+                box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+                z-index: 9999;
+                overflow: hidden;
+            }
+
+            .notif-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 13px 16px;
+                border-bottom: 1px solid #f0f0f0;
+                background: #fafafa;
+            }
+
+            .notif-header-title {
+                font-weight: 700;
+                font-size: 14px;
+                color: #0d2d45;
+            }
+
+            .notif-oznaci-sve {
+                background: none;
+                border: none;
+                cursor: pointer;
+                font-size: 12px;
+                color: #5bc400;
+                font-weight: 600;
+                font-family: 'Nunito', sans-serif;
+                padding: 0;
+                text-decoration: underline;
+            }
+
+            .notif-lista {
+                max-height: 330px;
+                overflow-y: auto;
+            }
+
+            .notif-item {
+                padding: 13px 16px;
+                cursor: pointer;
+                border-bottom: 1px solid #f8f8f8;
+                transition: background .15s;
+                border-left: 3px solid transparent;
+            }
+
+                .notif-item:hover {
+                    background: #f9f9f9;
+                }
+
+                .notif-item.novo {
+                    background: #f0fbe6;
+                    border-left-color: #5bc400;
+                }
+
+            .notif-item-naslov {
+                font-size: 13px;
+                color: #222;
+                margin-bottom: 3px;
+            }
+
+            .notif-item-sadrzaj {
+                font-size: 12px;
+                color: #666;
+                line-height: 1.4;
+            }
+
+            .notif-footer {
+                padding: 10px 16px;
+                border-top: 1px solid #f0f0f0;
+                text-align: center;
+                background: #fafafa;
+            }
+
+                .notif-footer a {
+                    font-size: 12px;
+                    color: #0d2d45;
+                    text-decoration: none;
+                    font-weight: 600;
+                }
+
+                    .notif-footer a:hover {
+                        color: #5bc400;
+                    }
+
+            @@keyframes zvoniAnim {
+                0%, 100% {
+                    transform: rotate(0deg);
+                }
+
+                10%, 30% {
+                    transform: rotate(-14deg);
+                }
+
+                20%, 40% {
+                    transform: rotate(14deg);
+                }
+
+                50% {
+                    transform: rotate(0deg);
+                }
+            }
+
+            .zvoni {
+                animation: zvoniAnim 0.8s ease-in-out;
+            }
+
+            /* ── MODAL ZA UNOS MJESTA ČASA ── */
+            .mjesto-modal-overlay {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                z-index: 99999;
+                align-items: center;
+                justify-content: center;
+            }
+
+                .mjesto-modal-overlay.aktivan {
+                    display: flex;
+                }
+
+            .mjesto-modal {
+                background: #fff;
+                border-radius: 14px;
+                padding: 32px 28px;
+                max-width: 400px;
+                width: 90%;
+                box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+                text-align: center;
+            }
+
+                .mjesto-modal h3 {
+                    font-weight: 800;
+                    color: #0d2d45;
+                    margin-bottom: 8px;
+                    font-size: 1.1rem;
+                }
+
+                .mjesto-modal p {
+                    color: #666;
+                    font-size: 0.88rem;
+                    margin-bottom: 18px;
+                }
+
+                .mjesto-modal input {
+                    width: 100%;
+                    padding: 10px 14px;
+                    border: 1px solid #ddd;
+                    border-radius: 8px;
+                    font-size: 0.95rem;
+                    font-family: 'Nunito', sans-serif;
+                    margin-bottom: 16px;
+                    box-sizing: border-box;
+                }
+
+            .mjesto-modal-akcije {
+                display: flex;
+                gap: 10px;
+                justify-content: center;
+            }
+
+            .btn-spremi-mjesto {
+                background: #5bc400;
+                color: #fff;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-weight: 700;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: 'Nunito', sans-serif;
+            }
+
+            .btn-otkazi-mjesto {
+                background: #f0f0f0;
+                color: #333;
+                border: none;
+                border-radius: 8px;
+                padding: 10px 24px;
+                font-weight: 700;
+                font-size: 0.9rem;
+                cursor: pointer;
+                font-family: 'Nunito', sans-serif;
+            }
+    </style>
+</head>
+<body>
+
+    <nav class="el-navbar">
+        @if (User.Identity != null && User.Identity.IsAuthenticated)
+{
+    var korisnikLogo = await UserManager.GetUserAsync(User);
+    string logoUrl = "/Home/Index";
+    if (korisnikLogo?.Uloga == Earn_Learn.Enums.Uloga.Student)
+        logoUrl = "/Student/Dashboard";
+    else if (korisnikLogo?.Uloga == Earn_Learn.Enums.Uloga.Tutor)
+        logoUrl = "/Tutor/Dashboard";
+    else if (korisnikLogo?.Uloga == Earn_Learn.Enums.Uloga.SystemManager)
+        logoUrl = "/SystemManager/Dashboard";
+
+    <a class="brand" href="@logoUrl">
+        <img src="~/images/Logo.png" alt="Earn&Learn logo" />
+    </a>
+}
+else
+{
+    <a class="brand" asp-area="" asp-controller="Home" asp-action="Index">
+        <img src="~/images/Logo.png" alt="Earn&Learn logo" />
+    </a>
+}
+        <div class="el-nav-links">
+            @if (User.Identity != null && User.Identity.IsAuthenticated)
+            {
+                var korisnik = await UserManager.GetUserAsync(User);
+
+                @if (korisnik?.Uloga == Earn_Learn.Enums.Uloga.Student)
+                {
+                    <a class="nav-text" asp-controller="Student" asp-action="Dashboard">Dashboard</a>
+                    <a class="nav-text" asp-controller="Student" asp-action="MojiCasovi">Moji Časovi</a>
+                    <a class="nav-text" asp-controller="Student" asp-action="Novcanik">Novčanik</a>
+
+                    <div class="notif-wrapper" id="notifWrapper">
+                        <button class="notif-btn" id="notifBtn" onclick="toggleNotifDropdown()" title="Obavještenja">
+                            <i class="bi bi-bell-fill" id="notifBellIcon" style="font-size:20px;"></i>
+                            <span class="notif-badge" id="notifBadge">0</span>
+                        </button>
+
+                        <div class="notif-dropdown" id="notifDropdown">
+                            <div class="notif-header">
+                                <span class="notif-header-title">🔔 Obavještenja</span>
+                                <button class="notif-oznaci-sve" onclick="oznaciSveProcitanim()">
+                                    Označi sve pročitanim
+                                </button>
+                            </div>
+                            <div class="notif-lista" id="notifLista">
+                                <div style="text-align:center;padding:28px;color:#bbb;font-size:13px;">
+                                    Učitavanje...
+                                </div>
+                            </div>
+                            <div class="notif-footer">
+                                <a href="/Student/Obavjestenja">Pogledaj sva obavještenja →</a>
+                            </div>
+                        </div>
+                    </div>
+                }
+                else if (korisnik?.Uloga == Earn_Learn.Enums.Uloga.Tutor)
+                {
+                    <a class="nav-text" asp-controller="Tutor" asp-action="Dashboard">Tutor Dashboard</a>
+                    <a class="btn-student-dash" asp-controller="Tutor" asp-action="StudentDashboard">Student Dashboard</a>
+                    <a class="nav-text" asp-controller="Tutor" asp-action="MojiCasovi">Moji Časovi</a>
+                    <a class="nav-text" asp-controller="Tutor" asp-action="Novcanik">Novčanik</a>
+
+                    @* ── NOTIFIKACIJE ZVONIK (prikazuje se samo verifikovanim tutorima) ── *@
+                    @if (korisnik.VerifikovanTutor == true)
+                    {
+                        <div class="notif-wrapper" id="notifWrapper">
+                            <button class="notif-btn" id="notifBtn" onclick="toggleNotifDropdown()" title="Notifikacije">
+                                <i class="bi bi-bell-fill" id="notifBellIcon" style="font-size:20px;"></i>
+                                <span class="notif-badge" id="notifBadge">0</span>
+                            </button>
+
+                            <div class="notif-dropdown" id="notifDropdown">
+                                <div class="notif-header">
+                                    <span class="notif-header-title">🔔 Notifikacije</span>
+                                    <button class="notif-oznaci-sve" onclick="oznaciSveProcitanim()">
+                                        Označi sve pročitanim
+                                    </button>
+                                </div>
+                                <div class="notif-lista" id="notifLista">
+                                    <div style="text-align:center;padding:28px;color:#bbb;font-size:13px;">
+                                        Učitavanje...
+                                    </div>
+                                </div>
+                                <div class="notif-footer">
+                                    <a href="/Tutor/Obavjestenja">Pogledaj sva obavještenja →</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- MODAL ZA UNOS MJESTA ČASA -->
+                        <div class="mjesto-modal-overlay" id="mjestoCasaModal">
+                            <div class="mjesto-modal">
+                                <div style="font-size:36px; margin-bottom:10px;" id="mjestoCasaIcon">📍</div>
+                                <h3 id="mjestoCasaNaslov">Unesite mjesto časa</h3>
+                                <p id="mjestoCasaOpis">Unesite link za Meet ili broj sale.</p>
+                                <input type="text" id="mjestoCasaInput" placeholder="npr. meet.google.com/xyz ili Sala 101" maxlength="300" />
+                                <div class="mjesto-modal-akcije">
+                                    <button class="btn-spremi-mjesto" onclick="spremiMjestoCasa()">Sačuvaj</button>
+                                    <button class="btn-otkazi-mjesto" onclick="zatvoriMjestoModal()">Otkaži</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+                else if (korisnik?.Uloga == Earn_Learn.Enums.Uloga.SystemManager)
+                {
+                    <a class="nav-text" asp-controller="SystemManager" asp-action="Dashboard">Dashboard</a>
+                }
+
+                <a class="btn-prijava" asp-controller="Profil" asp-action="Index">Moj profil</a>
+
+                <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="/" method="post" style="display:inline;">
+                    <button type="submit" class="btn-prijava" style="border:none; cursor:pointer;">Odjava</button>
+                </form>
+            }
+            else
+            {
+                <a class="nav-text" asp-controller="Home" asp-action="About">O nama</a>
+                <a class="nav-text" asp-controller="Home" asp-action="Contact">Kontakt</a>
+                <a class="btn-prijava" asp-area="Identity" asp-page="/Account/Login">Prijava</a>
+                <a class="btn-registracija" href="/Identity/Account/Register">Registracija</a>
+            }
+        </div>
+    </nav>
+
+    @RenderBody()
+
+    <footer class="el-footer">
+        <div class="footer-inner">
+            <div class="footer-logo-side">
+                <img src="~/images/Logo.png" alt="Earn&Learn logo" />
+            </div>
+            <div class="footer-col">
+                <h6>Brzi linkovi</h6>
+                <a asp-area="" asp-controller="Home" asp-action="About">O nama</a>
+                <a asp-area="" asp-controller="Home" asp-action="Contact">Kontakt</a>
+            </div>
+            <div class="footer-col">
+                <h6>Prava i sigurnost</h6>
+                <a asp-area="" asp-controller="Home" asp-action="Terms">Uslovi korištenja</a>
+                <a asp-area="" asp-controller="Home" asp-action="Privacy">Privatnost</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            &copy; 2026 Earn&amp;Learn. Sva prava zadržana.
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+
+    @* ── NOTIFIKACIJE JAVASCRIPT (aktivan samo kad je zvonik u DOM-u) ── *@
+    @if (User.Identity != null && User.Identity.IsAuthenticated)
+    {
+        var k = await UserManager.GetUserAsync(User);
+        if (k?.Uloga == Earn_Learn.Enums.Uloga.Tutor && k.VerifikovanTutor == true)
+        {
+            <script>
+                let notifOtvoren = false;
+                let aktivniTerminId = null;
+
+                document.addEventListener('click', function (e) {
+                const wrapper = document.getElementById('notifWrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                zatvoriNotif();
+                }
+                });
+
+                function toggleNotifDropdown() {
+                notifOtvoren ? zatvoriNotif() : otвориNotif();
+                }
+
+                function otвориNotif() {
+                document.getElementById('notifDropdown').style.display = 'block';
+                notifOtvoren = true;
+                ucitajNotifikacije();
+                }
+
+                function zatvoriNotif() {
+                document.getElementById('notifDropdown').style.display = 'none';
+                notifOtvoren = false;
+                }
+
+                async function ucitajNotifikacije() {
+                const lista = document.getElementById('notifLista');
+                try {
+                const res = await fetch('/Tutor/DohvatiNotifikacije', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await res.json();
+                renderNotifikacije(data);
+                } catch {
+                lista.innerHTML = '<div style="text-align:center;padding:20px;color:#bbb;font-size:13px;">Greška pri učitavanju.</div>';
+                }
+                }
+
+                function renderNotifikacije(lista) {
+                const el = document.getElementById('notifLista');
+                if (!lista || lista.length === 0) {
+                el.innerHTML = '<div style="text-align:center;padding:32px;color:#bbb;font-size:13px;">📭 Nema obavještenja</div>';
+                return;
+                }
+                el.innerHTML = lista.map(n => {
+                // Dugme se prikazuje samo ako termin postoji I mjesto JOŠ NIJE uneseno
+                const dugmeMjesto = (n.idTermina && !n.mjestoCasaUneseno)
+                ? `<button onclick="otвориMjestoModal(${n.idTermina}, event)"
+                style="margin-top:8px; background:#0d2d45; color:#fff; border:none;
+                border-radius:6px; padding:5px 12px; font-size:11px; font-weight:700;
+                cursor:pointer; font-family:'Nunito',sans-serif;">
+                📍 Unesi mjesto časa
+                </button>`
+                : '';
+
+                return `
+                <div class="notif-item ${!n.procitano ? 'novo' : ''}" onclick="oznaciProcitanim(${n.id})">
+                <div class="notif-item-naslov" style="font-weight:${!n.procitano ? '700' : '400'}">
+                ${escapeHtml(n.naslov)}
+                ${!n.procitano ? '<span style="background:#5bc400;color:white;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:5px;vertical-align:middle;">NOVO</span>' : ''}
+                </div>
+                <div class="notif-item-sadrzaj">${escapeHtml(n.sadrzaj)}</div>
+                ${dugmeMjesto}
+                </div>`;
+                }).join('');
+                }
+
+                function otвориMjestoModal(terminId, event) {
+                event.stopPropagation();
+                aktivniTerminId = terminId;
+                document.getElementById('mjestoCasaModal').classList.add('aktivan');
+                document.getElementById('mjestoCasaInput').value = '';
+                document.getElementById('mjestoCasaInput').focus();
+                }
+
+                function zatvoriMjestoModal() {
+                document.getElementById('mjestoCasaModal').classList.remove('aktivan');
+                aktivniTerminId = null;
+                }
+
+                async function spremiMjestoCasa() {
+                const mjesto = document.getElementById('mjestoCasaInput').value.trim();
+                if (!mjesto) {
+                alert('Molimo unesite mjesto časa.');
+                return;
+                }
+                if (!aktivniTerminId) return;
+
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+
+                try {
+                const res = await fetch('/Tutor/UnesMjestoCasa', {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+                'RequestVerificationToken': token
+                },
+                body: `terminId=${aktivniTerminId}&mjestoCasa=${encodeURIComponent(mjesto)}`
+                });
+
+                if (res.ok || res.redirected) {
+                zatvoriMjestoModal();
+                zatvoriNotif();
+                const toast = document.createElement('div');
+                toast.style.cssText = 'position:fixed;bottom:28px;right:28px;z-index:99999;background:#5bc400;color:#fff;border-radius:12px;padding:16px 22px;font-weight:700;font-size:.95rem;box-shadow:0 4px 20px rgba(0,0,0,.2);';
+                toast.textContent = '✅ Mjesto časa sačuvano, student je obaviješten!';
+                document.body.appendChild(toast);
+                setTimeout(() => toast.remove(), 4000);
+                ucitajNotifikacije();
+                } else {
+                alert('Greška pri čuvanju. Pokušajte ponovo.');
+                }
+                } catch {
+                alert('Greška pri slanju zahtjeva.');
+                }
+                }
+
+                document.getElementById('mjestoCasaModal')?.addEventListener('click', function (e) {
+                if (e.target === this) zatvoriMjestoModal();
+                });
+
+                async function oznaciProcitanim(id) {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                await fetch('/Tutor/OznaciProcitanim', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token },
+                body: `id=${id}`
+                }).catch(() => { });
+                osvjeziNotifBadge();
+                ucitajNotifikacije();
+                }
+
+                async function oznaciSveProcitanim() {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                await fetch('/Tutor/OznaciSveProcitanim', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token }
+                }).catch(() => { });
+                osvjeziNotifBadge();
+                ucitajNotifikacije();
+                }
+
+                async function osvjeziNotifBadge() {
+                try {
+                const res = await fetch('/Tutor/BrojNotifikacija', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await res.json();
+                const badge = document.getElementById('notifBadge');
+                const bell = document.getElementById('notifBellIcon');
+                if (!badge) return;
+                const prethodni = parseInt(badge.dataset.prethodni || '0');
+                if (data.broj > 0) {
+                badge.textContent = data.broj > 99 ? '99+' : data.broj;
+                badge.style.display = 'inline-block';
+                if (data.broj > prethodni) {
+                bell?.classList.remove('zvoni');
+                void bell?.offsetWidth;
+                bell?.classList.add('zvoni');
+                }
+                } else {
+                badge.style.display = 'none';
+                }
+                badge.dataset.prethodni = data.broj;
+                } catch { }
+                }
+
+                function escapeHtml(t) {
+                if (!t) return '';
+                return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                }
+
+                osvjeziNotifBadge();
+                setInterval(osvjeziNotifBadge, 30000);
+            </script>
+        }
+        else if (k?.Uloga == Earn_Learn.Enums.Uloga.Student)
+        {
+            <script>
+                let notifOtvoren = false;
+
+                document.addEventListener('click', function (e) {
+                const wrapper = document.getElementById('notifWrapper');
+                if (wrapper && !wrapper.contains(e.target)) {
+                zatvoriNotif();
+                }
+                });
+
+                function toggleNotifDropdown() {
+                notifOtvoren ? zatvoriNotif() : otвориNotif();
+                }
+
+                function otвориNotif() {
+                document.getElementById('notifDropdown').style.display = 'block';
+                notifOtvoren = true;
+                ucitajNotifikacije();
+                }
+
+                function zatvoriNotif() {
+                document.getElementById('notifDropdown').style.display = 'none';
+                notifOtvoren = false;
+                }
+
+                async function ucitajNotifikacije() {
+                const lista = document.getElementById('notifLista');
+                try {
+                const res = await fetch('/Student/DohvatiObavjestenja', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await res.json();
+                renderNotifikacije(data);
+                } catch {
+                lista.innerHTML = '<div style="text-align:center;padding:20px;color:#bbb;font-size:13px;">Greška pri učitavanju.</div>';
+                }
+                }
+
+                function renderNotifikacije(lista) {
+                const el = document.getElementById('notifLista');
+                if (!lista || lista.length === 0) {
+                el.innerHTML = '<div style="text-align:center;padding:32px;color:#bbb;font-size:13px;">📭 Nema obavještenja</div>';
+                return;
+                }
+                el.innerHTML = lista.map(n => `
+                <div class="notif-item ${!n.procitano ? 'novo' : ''}" onclick="oznaciProcitanim(${n.id})">
+                <div class="notif-item-naslov" style="font-weight:${!n.procitano ? '700' : '400'}">
+                ${escapeHtml(n.naslov)}
+                ${!n.procitano ? '<span style="background:#5bc400;color:white;font-size:10px;padding:1px 6px;border-radius:8px;margin-left:5px;vertical-align:middle;">NOVO</span>' : ''}
+                </div>
+                <div class="notif-item-sadrzaj">${escapeHtml(n.sadrzaj)}</div>
+                </div>
+                `).join('');
+                }
+
+                async function oznaciProcitanim(id) {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                await fetch('/Student/OznaciProcitanim', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token },
+                body: `id=${id}`
+                }).catch(() => { });
+                osvjeziNotifBadge();
+                ucitajNotifikacije();
+                }
+
+                async function oznaciSveProcitanim() {
+                const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value || '';
+                await fetch('/Student/OznaciSveProcitanim', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded', 'RequestVerificationToken': token }
+                }).catch(() => { });
+                osvjeziNotifBadge();
+                ucitajNotifikacije();
+                }
+
+                async function osvjeziNotifBadge() {
+                try {
+                const res = await fetch('/Student/BrojObavjestenja', {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const data = await res.json();
+                const badge = document.getElementById('notifBadge');
+                const bell = document.getElementById('notifBellIcon');
+                if (!badge) return;
+                const prethodni = parseInt(badge.dataset.prethodni || '0');
+                if (data.broj > 0) {
+                badge.textContent = data.broj > 99 ? '99+' : data.broj;
+                badge.style.display = 'inline-block';
+                if (data.broj > prethodni) {
+                bell?.classList.remove('zvoni');
+                void bell?.offsetWidth;
+                bell?.classList.add('zvoni');
+                }
+                } else {
+                badge.style.display = 'none';
+                }
+                badge.dataset.prethodni = data.broj;
+                } catch { }
+                }
+
+                function escapeHtml(t) {
+                if (!t) return '';
+                return t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+                }
+
+                osvjeziNotifBadge();
+                setInterval(osvjeziNotifBadge, 30000);
+            </script>
+        }
+    }
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    @if (TempData.Peek("ErrorPoruka") != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+            icon: 'error',
+            title: 'Pristup odbijen',
+            text: '@Html.Raw(TempData["ErrorPoruka"]?.ToString()?.Replace("'", "\\'"))',
+            confirmButtonColor: '#0d2d45',
+            confirmButtonText: 'U redu'
+            });
+            });
+        </script>
+    }
+    @if (TempData.Peek("SuccessPoruka") != null)
+    {
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+            Swal.fire({
+            icon: 'success',
+            title: 'Uspješno',
+            text: '@Html.Raw(TempData["SuccessPoruka"]?.ToString()?.Replace("'", "\\'"))',
+            confirmButtonColor: '#5bc400',
+            confirmButtonText: 'Sjajno'
+            });
+            });
+        </script>
+    }
+</body>
+</html>

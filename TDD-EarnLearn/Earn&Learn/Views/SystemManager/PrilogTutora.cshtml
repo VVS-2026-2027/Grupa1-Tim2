@@ -1,0 +1,165 @@
+﻿@model Earn_Learn.Models.Korisnik
+@{
+    ViewData["Title"] = "Dokumentacija tutora";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dok-page {
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 60px 20px;
+        text-align: center;
+    }
+
+        .dok-page h1 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 6px;
+        }
+
+        .dok-page p {
+            color: #666;
+            margin-bottom: 40px;
+        }
+
+    .dok-box {
+        background: #f8f8f8;
+        border: 2px dashed #ddd;
+        border-radius: 12px;
+        padding: 40px;
+        margin-bottom: 30px;
+    }
+
+    .dok-img {
+        max-width: 100%;
+        border-radius: 8px;
+        box-shadow: 0 4px 20px rgba(0,0,0,.1);
+    }
+
+    .dok-pdf-link {
+        display: inline-block;
+        background: #0d2d45;
+        color: #fff;
+        border-radius: 10px;
+        padding: 14px 32px;
+        font-weight: 700;
+        text-decoration: none;
+        font-size: 1rem;
+        transition: opacity .2s;
+    }
+
+        .dok-pdf-link:hover {
+            opacity: .85;
+            color: #fff;
+        }
+
+    .dok-empty {
+        color: #aaa;
+        font-size: 1rem;
+        padding: 40px 0;
+    }
+
+    .btn-nazad {
+        display: inline-block;
+        margin-top: 30px;
+        background: transparent;
+        border: 2px solid #0d2d45;
+        color: #0d2d45;
+        border-radius: 10px;
+        padding: 10px 28px;
+        font-weight: 700;
+        text-decoration: none;
+        transition: background .2s, color .2s;
+    }
+
+        .btn-nazad:hover {
+            background: #0d2d45;
+            color: #fff;
+        }
+
+    .ver-btns {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        margin-top: 24px;
+    }
+
+    .btn-ver {
+        background: #5bc400;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 12px 28px;
+        font-weight: 700;
+        font-size: .95rem;
+        cursor: pointer;
+        transition: opacity .2s;
+    }
+
+        .btn-ver:hover {
+            opacity: .85;
+        }
+
+    .btn-obrisi {
+        background: transparent;
+        border: 2px solid #ccc;
+        color: #666;
+        border-radius: 10px;
+        padding: 12px 24px;
+        font-weight: 700;
+        font-size: .95rem;
+        cursor: pointer;
+        transition: background .15s;
+    }
+
+        .btn-obrisi:hover {
+            background: #f0f0f0;
+        }
+</style>
+
+<div class="dok-page">
+    <h1>@Model.Ime @Model.Prezime</h1>
+    <p>Priložena dokumentacija za verifikaciju tutora</p>
+
+    <div class="dok-box">
+        @if (string.IsNullOrEmpty(Model.PrilogOcjene))
+        {
+            <div class="dok-empty">Tutor nije priložio dokumentaciju.</div>
+        }
+        else if (Model.PrilogOcjene.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+        {
+            <p style="color:#555; margin-bottom:16px;">PDF dokument:</p>
+            <a href="@Model.PrilogOcjene" target="_blank" class="dok-pdf-link">📄 Otvori PDF</a>
+        }
+        else
+        {
+            <img src="@Model.PrilogOcjene" alt="Dokumentacija" class="dok-img" />
+        }
+    </div>
+
+    @if (Model.VerifikovanTutor != true)
+    {
+        <div class="ver-btns">
+            <form method="post" asp-action="VerifikujTutora" asp-controller="SystemManager">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn-ver">✔ Verifikuj tutora</button>
+            </form>
+            <form method="post" asp-action="OdbijTutora" asp-controller="SystemManager"
+                  onsubmit="return confirm('Sigurno odbiti i obrisati ovaj nalog?')">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn-obrisi">🗑 Odbij zahtjev</button>
+            </form>
+        </div>
+    }
+    else
+    {
+        <p style="color:#5bc400; font-weight:700; margin-top:16px;">✔ Tutor je već verifikovan</p>
+    }
+
+    <br />
+    <a asp-controller="SystemManager" asp-action="ZahtjeviZaVerifikaciju" class="btn-nazad">← Nazad na zahtjeve</a>
+</div>

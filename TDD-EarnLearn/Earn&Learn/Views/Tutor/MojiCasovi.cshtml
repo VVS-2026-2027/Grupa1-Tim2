@@ -1,0 +1,324 @@
+﻿@model IEnumerable<Earn_Learn.Models.TerminSaTutorom>
+@using Earn_Learn.Models
+@using Earn_Learn.Enums
+@{
+    ViewData["Title"] = "Moji časovi";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var mjeseci = new[] { "", "januar", "februar", "mart", "april", "maj", "juni",
+                          "juli", "august", "septembar", "oktobar", "novembar", "decembar" };
+}
+
+<style>
+    .casovi-wrapper {
+        max-width: 900px;
+        margin: 60px auto;
+        padding: 0 24px;
+    }
+
+    .casovi-naslov {
+        font-size: 1.8rem;
+        font-weight: 800;
+        color: #0d2d45;
+        margin-bottom: 4px;
+    }
+
+    .casovi-podnaslov {
+        font-size: 1rem;
+        font-weight: 600;
+        color: #888;
+        margin-bottom: 40px;
+    }
+
+    .tabela-casova {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+        background: #fff;
+    }
+
+        .tabela-casova th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: .85rem;
+            font-weight: 800;
+            color: #5bc400;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .tabela-casova td {
+            padding: 16px;
+            font-size: .92rem;
+            color: #333;
+            border-bottom: 1px solid #f5f5f5;
+            vertical-align: middle;
+        }
+
+        .tabela-casova tr:hover {
+            background-color: #fafafa;
+        }
+
+    .predmet-naziv {
+        font-weight: 700;
+        color: #0d2d45;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 4px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+
+    .status-Slobodan {
+        background-color: #e8f5e9;
+        color: #2e7d32;
+    }
+
+    .status-Rezervisan {
+        background-color: #fff3e0;
+        color: #ef6c00;
+    }
+
+    .status-Potvrdjen {
+        background-color: #e3f2fd;
+        color: #1565c0;
+    }
+
+    .status-Odrzan {
+        background-color: #f3e5f5;
+        color: #6a1b9a;
+    }
+
+    .status-Otkazan {
+        background-color: #ffebee;
+        color: #c62828;
+    }
+
+    .btn-otkai {
+        background: #f0f0f0;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: .80rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #555;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: background .2s, border-color .2s, color .2s;
+        white-space: nowrap;
+    }
+
+        .btn-otkai:hover {
+            background: #ffe0e0;
+            border-color: #f88;
+            color: #c00;
+        }
+
+    .btn-kreiraj {
+        display: inline-block;
+        background: #5bc400;
+        color: #fff;
+        padding: 10px 24px;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.95rem;
+        text-decoration: none;
+        transition: opacity 0.2s;
+    }
+
+        .btn-kreiraj:hover {
+            opacity: 0.85;
+            color: #fff;
+        }
+
+    .btn-qr {
+        background: #e8f0ff;
+        border: 1px solid #b3c6ff;
+        border-radius: 8px;
+        padding: 6px 12px;
+        font-size: .80rem;
+        font-weight: 600;
+        cursor: pointer;
+        color: #1a4fbf;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        transition: background .2s;
+        white-space: nowrap;
+        text-decoration: none;
+    }
+
+        .btn-qr:hover {
+            background: #d0e0ff;
+            color: #1a4fbf;
+        }
+
+    .akcije-wrap {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+        align-items: center;
+    }
+
+    .cijena-cell {
+        font-weight: 700;
+        color: #0d2d45;
+    }
+
+    .info-ceka {
+        font-size: .8rem;
+        color: #ef6c00;
+        font-style: italic;
+    }
+
+    .casovi-footer {
+        margin-top: 60px;
+        color: #aaa;
+        font-size: .82rem;
+    }
+
+    .alert-success {
+        padding: 13px 22px;
+        background: #e8f5e0;
+        color: #2e7d00;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .93rem;
+        margin-bottom: 20px;
+    }
+
+    .alert-error {
+        padding: 13px 22px;
+        background: #fff0f0;
+        color: #c00;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: .93rem;
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="casovi-wrapper">
+    <div class="casovi-naslov">Moji časovi</div>
+    <div class="casovi-podnaslov">Pregled Vaših termina i zakazanih instrukcija od strane studenata</div>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert-success">✓ @TempData["Uspjeh"]</div>
+    }
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert-error">✗ @TempData["Greska"]</div>
+    }
+
+    @if (Model == null || !Model.Any())
+    {
+        <div style="background-color: #f4f6f8; padding: 20px; border-radius: 6px; color: #555;">
+            Trenutno nemate unesenih termina u rasporedu.
+        </div>
+        <a class="btn-kreiraj" style="margin-top:16px; display:inline-block;" asp-controller="Tutor" asp-action="KreirajTermin">
+            + Kreiraj termin
+        </a>
+    }
+    else
+    {
+        <div style="text-align: right; margin-bottom: 12px;">
+            <a class="btn-kreiraj" asp-controller="Tutor" asp-action="KreirajTermin">
+                + Kreiraj termin
+            </a>
+        </div>
+
+        <table class="tabela-casova">
+            <thead>
+                <tr>
+                    <th>Predmet</th>
+                    <th>Student</th>
+                    <th>Datum i vrijeme</th>
+                    <th>Tip</th>
+                    <th>Cijena</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var stavka in Model)
+                {
+                    var d = stavka.Termin.datumIVrijeme;
+                    var datumBos = $"{d.Day}. {mjeseci[d.Month]} {d.Year}. u {d.ToString("HH:mm")}";
+                    var tipTekst = stavka.Termin.tipInstrukcija == TipInstrukcija.Uzivo ? "Uživo" : "Online";
+                    <tr>
+                        <td>
+                            <span class="predmet-naziv">
+                                @(stavka.Predmet != null ? stavka.Predmet.naziv : "Opšte instrukcije")
+                            </span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(stavka.Termin.idStudenta))
+                            {
+                                @stavka.Tutor.Ime
+                                @: @stavka.Tutor.Prezime
+                            }
+                            else
+                            {
+                                <span style="color: #aaa; font-style: italic;">Slobodan termin</span>
+                            }
+                        </td>
+                        <td>@datumBos</td>
+                        <td>@tipTekst</td>
+                        <td class="cijena-cell">@stavka.Termin.cijena.ToString("0.00") KM</td>
+                        <td>
+                            <span class="status-badge status-@stavka.Termin.status.ToString()">
+                                @stavka.Termin.status.ToString()
+                            </span>
+                        </td>
+                        <td>
+                            <div class="akcije-wrap">
+                                @if (stavka.Termin.status == StatusTermina.Rezervisan)
+                                {
+                                    <a class="btn-qr"
+                                       asp-action="QrKod"
+                                       asp-controller="Tutor"
+                                       asp-route-terminId="@stavka.Termin.id">
+                                        📱 QR
+                                    </a>
+                                    @if (stavka.Termin.datumIVrijeme > DateTime.Now)
+                                    {
+                                        <form method="post" asp-action="OtkaziTermin" asp-controller="Tutor"
+                                              onsubmit="return confirm('Sigurno želiš otkazati ovaj termin?')" style="margin:0;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="terminId" value="@stavka.Termin.id" />
+                                            <button type="submit" class="btn-otkai">🗑 otkaži</button>
+                                        </form>
+                                    }
+                                }
+                                @if (stavka.Termin.status == StatusTermina.Slobodan && stavka.Termin.datumIVrijeme > DateTime.Now)
+                                {
+                                    <form method="post" asp-action="OtkaziTermin" asp-controller="Tutor"
+                                          onsubmit="return confirm('Sigurno želiš otkazati ovaj termin?')" style="margin:0;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="terminId" value="@stavka.Termin.id" />
+                                        <button type="submit" class="btn-otkai">🗑 otkaži</button>
+                                    </form>
+                                }
+                            </div>
+                            @if (stavka.Termin.status == StatusTermina.Rezervisan)
+                            {
+                                <div class="info-ceka" style="margin-top:4px;">⏳ čeka potvrdu studenta</div>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+
+    <div class="casovi-footer">
+        &copy; 2026<br />Sva prava zadržana
+    </div>
+</div>

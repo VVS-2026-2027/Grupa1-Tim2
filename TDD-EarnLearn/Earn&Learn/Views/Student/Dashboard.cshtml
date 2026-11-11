@@ -1,0 +1,561 @@
+﻿@model Earn_Learn.Models.StudentDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    .dash-wrapper {
+        background: #0d2d45;
+        min-height: 100vh;
+        color: #fff;
+        padding-bottom: 80px;
+        margin: -20px;
+    }
+
+    .dash-hero {
+        background: #0d2d45;
+        padding: 70px 20px 50px;
+        text-align: center;
+    }
+
+        .dash-hero h1 {
+            font-size: 2.4rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 28px;
+        }
+
+    .search-wrapper-container {
+        position: relative;
+        max-width: 560px;
+        margin: 0 auto;
+    }
+
+    .dash-search {
+        display: flex;
+        align-items: center;
+        background: #fff;
+        border-radius: 30px;
+        padding: 13px 24px;
+        gap: 12px;
+    }
+
+        .dash-search i {
+            color: #0d2d45;
+            font-size: 1.15rem;
+        }
+
+        .dash-search input {
+            border: none;
+            outline: none;
+            width: 100%;
+            font-size: 1rem;
+            color: #555;
+            background: transparent;
+        }
+
+        .dash-search button {
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            padding: 0;
+            display: flex;
+            align-items: center;
+        }
+
+    /* ── FILTER PANEL ── */
+    .filter-panel {
+        display: none;
+        background: #fff;
+        border-radius: 18px;
+        margin-top: 10px;
+        padding: 16px 22px;
+        box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    }
+
+    .filter-row {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        align-items: flex-end;
+    }
+
+    .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .filter-group label {
+            color: #0d2d45;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .filter-group input,
+        .filter-group select {
+            width: 110px;
+            border: 1.5px solid #dde;
+            border-radius: 8px;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            outline: none;
+            color: #333;
+            background: #fff;
+            transition: border-color 0.2s;
+        }
+
+            .filter-group input:focus,
+            .filter-group select:focus {
+                border-color: #0d2d45;
+            }
+
+    .btn-ocisti-filter {
+        background: transparent;
+        border: 1.5px solid #ccc;
+        border-radius: 8px;
+        padding: 6px 14px;
+        font-size: 0.82rem;
+        color: #888;
+        cursor: pointer;
+        align-self: flex-end;
+        transition: border-color 0.2s, color 0.2s;
+    }
+
+        .btn-ocisti-filter:hover {
+            border-color: #999;
+            color: #555;
+        }
+
+    /* ── SEARCH RESULTS ── */
+    .search-results-dropdown {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        z-index: 1000;
+        margin-top: 10px;
+        max-height: 420px;
+        overflow-y: auto;
+        display: none;
+        padding: 8px;
+    }
+
+    .search-tutor-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 14px 18px;
+        border-bottom: 1px solid #f0f0f0;
+        transition: background 0.2s, transform 0.15s;
+        border-radius: 12px;
+    }
+
+        .search-tutor-card:last-child {
+            border-bottom: none;
+        }
+
+        .search-tutor-card:hover {
+            background: #f7f9fb;
+        }
+
+    .tutor-info-box {
+        text-align: left;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+        .tutor-info-box h4 {
+            margin: 0;
+            font-size: 1.05rem;
+            color: #0d2d45;
+            font-weight: 800;
+        }
+
+        .tutor-info-box p {
+            margin: 0;
+            font-size: 0.88rem;
+            color: #666;
+            line-height: 1.4;
+        }
+
+    .tutor-info-meta {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        font-size: 0.85rem;
+        font-weight: 700;
+        margin-top: 2px;
+    }
+
+    .search-rating {
+        color: #ffc107;
+    }
+
+    .search-price {
+        color: #2e7d00;
+        background: #e8f5e0;
+        padding: 2px 8px;
+        border-radius: 6px;
+    }
+
+    .btn-zakazi-search {
+        background: #5bc400;
+        color: #fff !important;
+        border: none;
+        padding: 8px 18px;
+        border-radius: 20px;
+        font-size: 0.88rem;
+        font-weight: 800;
+        text-decoration: none !important;
+        transition: background 0.2s;
+        white-space: nowrap;
+    }
+
+        .btn-zakazi-search:hover {
+            background: #4ab000;
+        }
+
+    .search-no-results {
+        padding: 20px;
+        text-align: center;
+        color: #888;
+        font-size: 0.95rem;
+        font-weight: 600;
+    }
+
+    .dash-sessions {
+        max-width: 780px;
+        margin: 50px auto 0;
+        padding: 0 24px;
+    }
+
+        .dash-sessions h2 {
+            font-size: .95rem;
+            font-weight: 600;
+            color: #a0b8c8;
+            margin-bottom: 16px;
+            text-transform: none;
+        }
+
+    .termin-card {
+        background: #1a3a55;
+        border-radius: 10px;
+        padding: 18px 26px;
+        margin-bottom: 12px;
+        font-weight: 700;
+        font-size: .9rem;
+        letter-spacing: .4px;
+        color: #fff;
+        text-transform: uppercase;
+    }
+
+    .no-termini {
+        color: #a0b8c8;
+        font-size: .95rem;
+        padding: 20px 0;
+    }
+
+        .no-termini a {
+            color: #5bc400;
+            text-decoration: none;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+            .no-termini a:hover {
+                text-decoration: underline;
+            }
+
+    .dash-spotlight {
+        max-width: 780px;
+        margin: 80px auto 0;
+        padding: 0 24px;
+        text-align: center;
+    }
+
+        .dash-spotlight h2 {
+            font-size: 1.7rem;
+            font-weight: 800;
+            letter-spacing: 4px;
+            color: #fff;
+            margin-bottom: 8px;
+        }
+
+        .dash-spotlight .subtitle {
+            color: #a0b8c8;
+            font-size: 1rem;
+            margin-bottom: 34px;
+        }
+
+    .tutor-grid {
+        display: flex;
+        justify-content: center;
+        gap: 20px;
+        flex-wrap: wrap;
+    }
+
+    .tutor-card {
+        background: #1a3a55;
+        border-radius: 14px;
+        padding: 34px 20px 24px;
+        width: 185px;
+        text-align: center;
+        transition: transform .15s;
+        cursor: pointer;
+    }
+
+        .tutor-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .tutor-card i {
+            font-size: 3.4rem;
+            color: #a0b8c8;
+            display: block;
+            margin-bottom: 14px;
+        }
+
+        .tutor-card .tutor-name {
+            font-size: .88rem;
+            font-weight: 700;
+            color: #fff;
+            display: block;
+        }
+
+        .tutor-card .tutor-ocjena {
+            font-size: .8rem;
+            color: #5bc400;
+            margin-top: 4px;
+            display: block;
+        }
+</style>
+
+<div class="dash-wrapper">
+
+    <div class="dash-hero">
+        <h1>Zdravo, @Model.Ime!</h1>
+
+        <div class="search-wrapper-container">
+            <div class="dash-search">
+                <i class="bi bi-search"></i>
+                <input type="text" id="studentSearchInput"
+                       placeholder="Pretraži tutore ili predmete npr. Tehnike programiranja"
+                       autocomplete="off" />
+                <button type="button" id="btnSearchSubmit">
+                    <i class="bi bi-arrow-right" style="color:#0d2d45;"></i>
+                </button>
+            </div>
+
+            <!-- ── FILTER PANEL ── -->
+            <div id="filterPanel" class="filter-panel">
+                <div class="filter-row">
+                    <div class="filter-group">
+                        <label>CIJENA OD (KM/h)</label>
+                        <input type="number" id="filterMinCijena" min="0" placeholder="npr. 10" />
+                    </div>
+                    <div class="filter-group">
+                        <label>CIJENA DO (KM/h)</label>
+                        <input type="number" id="filterMaxCijena" min="0" placeholder="npr. 50" />
+                    </div>
+                    <div class="filter-group">
+                        <label>MIN. REJTING ★</label>
+                        <select id="filterMinRejting">
+                            <option value="">Svi</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                            <option value="4.5">4.5+</option>
+                        </select>
+                    </div>
+                    <button id="btnOcistiFilter" class="btn-ocisti-filter">Očisti</button>
+                </div>
+            </div>
+
+            <div id="searchResultsDropdown" class="search-results-dropdown"></div>
+        </div>
+    </div>
+
+    <div class="dash-sessions">
+        <h2>Tvoje nadolazeće tutoring sesije</h2>
+
+        @if (Model.NadolazaciTermini.Any())
+        {
+            @foreach (var st in Model.NadolazaciTermini)
+            {
+                <div class="termin-card">
+                    @st.Tutor.Ime.ToUpper() @st.Tutor.Prezime.ToUpper() —
+                    @st.Termin.datumIVrijeme.ToString("dd.MM.yyyy. HH:mm")
+                    @if (st.Predmet != null)
+                    {
+                        <span style="color:#a0b8c8; font-weight:400; margin-left:8px;">
+                            | @st.Predmet.naziv
+                        </span>
+                    }
+                    <span style="color:#5bc400; font-weight:400; margin-left:8px;">
+                        | @st.Termin.cijena.ToString("0.00") KM
+                    </span>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="no-termini">
+                Nemaš nadolazećih termina.
+                <a id="linkPronadjiTutora">Pronađi tutora!</a>
+            </p>
+        }
+    </div>
+
+    <div class="dash-spotlight">
+        <h2>TUTOR SPOTLIGHT</h2>
+        <p class="subtitle">Najbolje ocijenjeni tutori</p>
+
+        <div class="tutor-grid">
+            @foreach (var t in Model.TopTutori)
+            {
+                <a href="/Tutor/Profil?id=@t.Id" style="text-decoration:none;">
+                    <div class="tutor-card">
+                        <i class="bi bi-person-circle"></i>
+                        <span class="tutor-name">@t.Ime @t.Prezime</span>
+                        @if (t.ProsjecnaOcjena.HasValue && t.ProsjecnaOcjena > 0)
+                        {
+                            <span class="tutor-ocjena">
+                                ★ @t.ProsjecnaOcjena.Value.ToString("0.0")
+                            </span>
+                        }
+                    </div>
+                </a>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        $(document).ready(function () {
+            var searchInput = $('#studentSearchInput');
+            var resultsDropdown = $('#searchResultsDropdown');
+
+            $('#linkPronadjiTutora').on('click', function (e) {
+                e.preventDefault();
+                $('html, body').animate({
+                    scrollTop: $(".dash-hero").offset().top
+                }, 400, function () {
+                    searchInput.focus();
+                });
+            });
+
+            // ── GLAVNA FUNKCIJA ZA PRETRAGU (sa filterima) ──
+            function izvrsiPretragu() {
+                var query = searchInput.val().trim();
+
+                if (query.length === 0) {
+                    resultsDropdown.hide().empty();
+                    return;
+                }
+
+                var params = { query: query };
+
+                var minC = $('#filterMinCijena').val();
+                var maxC = $('#filterMaxCijena').val();
+                var minR = $('#filterMinRejting').val();
+
+                if (minC !== '') params.minCijena = minC;
+                if (maxC !== '') params.maxCijena = maxC;
+                if (minR !== '') params.minRejting = minR;
+
+                $.ajax({
+                    url: '/Student/PretraziTutore',
+                    type: 'GET',
+                    data: params,
+                    success: function (data) {
+                        resultsDropdown.empty();
+
+                        if (data.length === 0) {
+                            resultsDropdown.append('<div class="search-no-results">Nema pronađenih tutora ni predmeta.</div>');
+                        } else {
+                            $.each(data, function (index, tutor) {
+                                var predmetiLista = tutor.predmeti.join(', ');
+                                var ocjenaTekst = tutor.prosjecnaOcjena > 0
+                                    ? '★ ' + tutor.prosjecnaOcjena.toFixed(1)
+                                    : '★ Nema ocjena';
+                                var cijenaTekst = tutor.cijenaPoSatu > 0
+                                    ? tutor.cijenaPoSatu.toFixed(2) + ' KM/h'
+                                    : 'Cijena po dogovoru';
+
+                                var cardHtml = `
+                                            <div class="search-tutor-card">
+                                                <div class="tutor-info-box">
+                                                    <h4>
+                                                        <a href="/Tutor/Profil?id=${tutor.id}"
+                                                           style="color:#0d2d45; text-decoration:none;">
+                                                            ${tutor.ime} ${tutor.prezime}
+                                                        </a>
+                                                    </h4>
+                                                    <p><strong>Predmeti:</strong> ${predmetiLista || 'Nema dodijeljenih predmeta'}</p>
+                                                    <div class="tutor-info-meta">
+                                                        <span class="search-rating">${ocjenaTekst}</span>
+                                                        <span class="search-price">${cijenaTekst}</span>
+                                                    </div>
+                                                </div>
+                                                <div>
+                                                    <a href="/Tutor/Profil?id=${tutor.id}"
+                                                       class="btn-zakazi-search">Zakaži</a>
+                                                </div>
+                                            </div>
+                                        `;
+                                resultsDropdown.append(cardHtml);
+                            });
+                        }
+                        resultsDropdown.show();
+                    },
+                    error: function () {
+                        console.error("Greška prilikom izvršavanja pretrage.");
+                    }
+                });
+            }
+
+            // Pokreni pretragu kad korisnik tipka
+            searchInput.on('input', function () {
+                $('#filterPanel').show();
+                izvrsiPretragu();
+            });
+
+            // Filtri automatski osvježavaju rezultate
+            $('#filterMinCijena, #filterMaxCijena, #filterMinRejting').on('input change', function () {
+                izvrsiPretragu();
+            });
+
+            // Očisti filtere
+            $('#btnOcistiFilter').on('click', function () {
+                $('#filterMinCijena, #filterMaxCijena').val('');
+                $('#filterMinRejting').val('');
+                izvrsiPretragu();
+            });
+
+            // Zatvori dropdown klikom van search areala
+            $(document).click(function (e) {
+                if (!$(e.target).closest('.search-wrapper-container').length) {
+                    resultsDropdown.hide();
+                    $('#filterPanel').hide();
+                }
+            });
+
+            // Ponovo prikaži dropdown ako ima upisanog teksta
+            searchInput.click(function () {
+                if ($(this).val().trim().length > 0) {
+                    $('#filterPanel').show();
+                    resultsDropdown.show();
+                }
+            });
+        });
+    </script>
+}

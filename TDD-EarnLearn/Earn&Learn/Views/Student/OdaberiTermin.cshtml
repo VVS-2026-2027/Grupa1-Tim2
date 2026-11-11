@@ -1,0 +1,65 @@
+﻿@model List<Earn_Learn.Models.Termin>
+@{
+    ViewData["Title"] = "Odaberi termin";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var tutor = ViewBag.Tutor as Earn_Learn.Models.Korisnik;
+    var terminPredmeti = ViewBag.TerminPredmeti as Dictionary<int, string> ?? new();
+}
+
+<div class="container mt-5" style="max-width:680px;">
+    <h4 class="fw-bold mb-1">
+        Termini — @tutor?.Ime @tutor?.Prezime
+    </h4>
+    <p style="color:#888; margin-bottom:28px;">
+        Cijena: <strong>@tutor?.CijenaPoSatu KM/h</strong>
+    </p>
+
+    @if (TempData["Uspjeh"] != null)
+    {
+        <div class="alert alert-success">@TempData["Uspjeh"]</div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div style="background:#f4f6fa; border-radius:12px; padding:32px; text-align:center; color:#888;">
+            Nema dostupnih slobodnih termina za ovog tutora.
+        </div>
+    }
+    else
+    {
+        @foreach (var t in Model)
+        {
+            var predmetNaziv = terminPredmeti.GetValueOrDefault(t.id, "—");
+            <div style="background:#fff; border:1px solid #eee; border-radius:12px;
+                padding:18px 24px; margin-bottom:12px;
+                display:flex; justify-content:space-between; align-items:center;
+                box-shadow:0 2px 8px rgba(0,0,0,0.06);">
+                <div>
+                    <div style="font-weight:700; font-size:1rem; color:#0d2d45;">
+                        @t.datumIVrijeme.ToString("dd.MM.yyyy. HH:mm")
+                    </div>
+                    <div style="color:#666; font-size:0.88rem; margin-top:4px;">
+                        @predmetNaziv
+                    </div>
+                    <div style="color:#2e7d00; font-size:0.85rem; font-weight:700; margin-top:4px;">
+                        @t.cijena KM/h
+                    </div>
+                </div>
+                <a asp-controller="Student" asp-action="RezervisiTermin"
+                       asp-route-id="@t.id"
+                       style="background:#5bc400; color:#fff; padding:10px 24px;
+                    border-radius:20px; font-weight:700; text-decoration:none;
+                    font-size:0.9rem; white-space:nowrap;">
+                    Rezerviši
+                </a>
+            </div>
+        }
+    }
+
+    <div style="margin-top:20px;">
+        <a asp-controller="Student" asp-action="Dashboard"
+               style="color:#888; text-decoration:none; font-size:0.9rem;">
+            ← Nazad na dashboard
+        </a>
+    </div>
+</div>
