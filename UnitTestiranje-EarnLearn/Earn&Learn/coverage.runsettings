@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RunSettings>
+  <DataCollectionRunSettings>
+    <DataCollectors>
+      <DataCollector friendlyName="Code Coverage" uri="datacollector://Microsoft/CodeCoverage/2.0" assemblyQualifiedName="Microsoft.VisualStudio.Coverage.DynamicCoverageDataCollector, Microsoft.VisualStudio.TraceCollector, Version=11.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+        <Configuration>
+          <CodeCoverage>
+
+            <!-- Assembliji koji nisu dio mjerenja: sami testovi i MSTest -->
+            <ModulePaths>
+              <Exclude>
+                <ModulePath>.*Tests\.dll$</ModulePath>
+                <ModulePath>.*MSTest.*\.dll$</ModulePath>
+              </Exclude>
+            </ModulePaths>
+
+            <!-- Fajlovi koji se po postavci ne testiraju ili su generisani -->
+            <Sources>
+              <Exclude>
+                <!-- Klasa Program (isključeno po postavci) -->
+                <Source>.*\\Program\.cs$</Source>
+                <!-- Razor pogledi (isključeno po postavci) -->
+                <Source>.*\.cshtml$</Source>
+                <Source>.*\\obj\\.*</Source>
+                <!-- EF migracije (generisan kod) -->
+                <Source>.*\\Migrations\\.*</Source>
+              </Exclude>
+            </Sources>
+
+            <!-- Generisane klase pogleda -->
+            <Functions>
+              <Exclude>
+                <Function>^AspNetCoreGeneratedDocument\..*</Function>
+              </Exclude>
+            </Functions>
+
+          </CodeCoverage>
+        </Configuration>
+      </DataCollector>
+    </DataCollectors>
+  </DataCollectionRunSettings>
+</RunSettings>

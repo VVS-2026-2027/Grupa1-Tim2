@@ -1,0 +1,5 @@
+[
+  { "id": 1, "idKorisnika": "korisnik-10", "naslov": "Novi zadatak", "sadrzaj": "Dodan je novi zadatak.", "datumSlanja": "2026-11-01T10:00:00", "procitano": false, "idTermina": 5 },
+  { "id": 2, "idKorisnika": "korisnik-11", "naslov": "Podsjetnik", "sadrzaj": "Rok ističe sutra.", "datumSlanja": "2026-11-05T08:30:00", "procitano": true, "idTermina": null },
+  { "id": 3, "idKorisnika": "korisnik-12", "naslov": "A", "sadrzaj": "Kratko.", "datumSlanja": "2026-11-10T23:59:00", "procitano": false }
+]

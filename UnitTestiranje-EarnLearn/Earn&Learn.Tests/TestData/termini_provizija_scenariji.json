@@ -1,0 +1,6 @@
+[
+  { "cijenaTermina": 100,   "ocekivanaProvizija": 10,   "ocekivanaZaradaTutora": 90   },
+  { "cijenaTermina": 60,    "ocekivanaProvizija": 6,    "ocekivanaZaradaTutora": 54   },
+  { "cijenaTermina": 15,    "ocekivanaProvizija": 1.5,  "ocekivanaZaradaTutora": 13.5 },
+  { "cijenaTermina": 33.33, "ocekivanaProvizija": 3.33, "ocekivanaZaradaTutora": 30   }
+]

@@ -1,0 +1,5 @@
+[
+  { "cijenaPoSatu": 20,   "ocekivanaCijena": 20   },
+  { "cijenaPoSatu": null, "ocekivanaCijena": 0    },
+  { "cijenaPoSatu": 35.5, "ocekivanaCijena": 35.5 }
+]

@@ -1,0 +1,7 @@
+dozvoljenaUloga,stvarnaUloga
+Student,Tutor
+Student,SystemManager
+Tutor,Student
+Tutor,SystemManager
+SystemManager,Student
+SystemManager,Tutor

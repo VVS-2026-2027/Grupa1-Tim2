@@ -1,0 +1,5 @@
+[
+  { "uloga": "Student", "url": "/Student/Dashboard" },
+  { "uloga": "Tutor", "url": "/Tutor/Dashboard" },
+  { "uloga": "SystemManager", "url": "/SystemManager/Dashboard" }
+]

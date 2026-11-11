@@ -1,0 +1,8 @@
+[
+  { "stanjeRacuna": 100,   "cijenaTermina": 20, "dovoljnoSredstava": true  },
+  { "stanjeRacuna": 20,    "cijenaTermina": 20, "dovoljnoSredstava": true  },
+  { "stanjeRacuna": 500,   "cijenaTermina": 0,  "dovoljnoSredstava": true  },
+  { "stanjeRacuna": 19.99, "cijenaTermina": 20, "dovoljnoSredstava": false },
+  { "stanjeRacuna": 0,     "cijenaTermina": 15, "dovoljnoSredstava": false },
+  { "stanjeRacuna": 5,     "cijenaTermina": 50, "dovoljnoSredstava": false }
+]

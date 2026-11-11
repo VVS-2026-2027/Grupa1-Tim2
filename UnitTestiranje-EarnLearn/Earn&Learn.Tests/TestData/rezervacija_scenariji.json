@@ -1,0 +1,8 @@
+[
+  { "stanjeRacuna": 100, "cijenaPoSatuTutora": 20,   "cijenaTermina": 15, "ocekivanaCijena": 20, "dovoljnoSredstava": true  },
+  { "stanjeRacuna": 20,  "cijenaPoSatuTutora": 20,   "cijenaTermina": 15, "ocekivanaCijena": 20, "dovoljnoSredstava": true  },
+  { "stanjeRacuna": 50,  "cijenaPoSatuTutora": null, "cijenaTermina": 30, "ocekivanaCijena": 30, "dovoljnoSredstava": true  },
+  { "stanjeRacuna": 19,  "cijenaPoSatuTutora": 20,   "cijenaTermina": 15, "ocekivanaCijena": 20, "dovoljnoSredstava": false },
+  { "stanjeRacuna": 0,   "cijenaPoSatuTutora": null, "cijenaTermina": 10, "ocekivanaCijena": 10, "dovoljnoSredstava": false },
+  { "stanjeRacuna": 10,  "cijenaPoSatuTutora": 25,   "cijenaTermina": 5,  "ocekivanaCijena": 25, "dovoljnoSredstava": false }
+]

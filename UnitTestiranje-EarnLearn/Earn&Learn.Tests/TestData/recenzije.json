@@ -1,0 +1,5 @@
+[
+  { "id": 1, "idStudenta": "student-1", "idTutora": "tutor-1", "ocjena": 5, "komentar": "Odličan tutor, sve objasni jasno." },
+  { "id": 2, "idStudenta": "student-2", "idTutora": "tutor-1", "ocjena": 3, "komentar": "Solidno." },
+  { "id": 3, "idStudenta": "student-3", "idTutora": "tutor-2", "ocjena": 1, "komentar": "" }
+]
