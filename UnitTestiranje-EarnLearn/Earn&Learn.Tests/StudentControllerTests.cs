@@ -612,6 +612,37 @@ namespace Earn_Learn.Tests
             Assert.AreEqual(ocekivaniId, tutori[0].GetProperty("id").GetString());
         }
 
+        [TestMethod]
+        public void StudentDashboardViewModel_NovaInstanca_PodrazumijevaneVrijednostiSuPrazne()
+        {
+            var model = new StudentDashboardViewModel();
+
+            Assert.AreEqual("", model.Ime);
+            Assert.AreEqual("", model.Prezime);
+            Assert.AreEqual(0, model.NadolazaciTermini.Count);
+            Assert.AreEqual(0, model.TopTutori.Count);
+        }
+
+        [TestMethod]
+        public void StudentDashboardViewModel_PostavljenaSvaSvojstva_VracaIstuVrijednost()
+        {
+            var termini = new List<TerminSaTutorom> { new TerminSaTutorom() };
+            var tutori = new List<Korisnik> { new Korisnik() };
+
+            var model = new StudentDashboardViewModel
+            {
+                Ime = "Amar",
+                Prezime = "Hadžić",
+                NadolazaciTermini = termini,
+                TopTutori = tutori
+            };
+
+            Assert.AreEqual("Amar", model.Ime);
+            Assert.AreEqual("Hadžić", model.Prezime);
+            Assert.AreSame(termini, model.NadolazaciTermini);
+            Assert.AreSame(tutori, model.TopTutori);
+        }
+
         // ---------- RezervisiTermin (GET) ----------
 
         [TestMethod]

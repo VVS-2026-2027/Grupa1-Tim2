@@ -29,6 +29,43 @@ namespace Earn_Learn.Tests
         }
 
         [TestMethod]
+        public void Recenzija_NovaInstanca_PodrazumijevaneVrijednostiSuIspravne()
+        {
+            var recenzija = new Recenzija();
+
+            Assert.AreEqual(0, recenzija.id);
+            Assert.AreEqual(string.Empty, recenzija.idStudenta);
+            Assert.AreEqual(string.Empty, recenzija.idTutora);
+            Assert.AreEqual(0, recenzija.ocjena);
+            Assert.AreEqual(string.Empty, recenzija.komentar);
+            Assert.IsTrue(recenzija.datumRecenzije <= DateTime.UtcNow
+                          && recenzija.datumRecenzije > DateTime.UtcNow.AddMinutes(-1));
+        }
+
+        [TestMethod]
+        public void Recenzija_PostavljenaSvaSvojstva_VracaIstuVrijednost()
+        {
+            var datum = new DateTime(2026, 11, 1, 10, 30, 0);
+
+            var recenzija = new Recenzija
+            {
+                id = 7,
+                idStudenta = "s1",
+                idTutora = "t1",
+                ocjena = 4,
+                komentar = "Odlično objašnjava",
+                datumRecenzije = datum
+            };
+
+            Assert.AreEqual(7, recenzija.id);
+            Assert.AreEqual("s1", recenzija.idStudenta);
+            Assert.AreEqual("t1", recenzija.idTutora);
+            Assert.AreEqual(4, recenzija.ocjena);
+            Assert.AreEqual("Odlično objašnjava", recenzija.komentar);
+            Assert.AreEqual(datum, recenzija.datumRecenzije);
+        }
+
+        [TestMethod]
         public void Recenzija_PostavljenaDvaPutaRazlicitiObjekti_VracaPosljednji()
         {
             var prva = new Recenzija();
