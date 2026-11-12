@@ -1,0 +1,5 @@
+[
+  { "idKorisnika": "student-1", "idPredmeta": 3 },
+  { "idKorisnika": "", "idPredmeta": 10 },
+  { "idKorisnika": "tutor-9", "idPredmeta": -1 }
+]

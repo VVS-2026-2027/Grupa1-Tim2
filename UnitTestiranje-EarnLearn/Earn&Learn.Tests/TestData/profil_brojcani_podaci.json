@@ -1,0 +1,5 @@
+[
+  { "uloga": "Student", "brojIndeksa": 12345, "godinaStudija": 2, "brojRecenzija": null, "brojCasova": null },
+  { "uloga": "Tutor", "brojIndeksa": null, "godinaStudija": null, "brojRecenzija": 8, "brojCasova": 25 },
+  { "uloga": "SystemManager", "brojIndeksa": null, "godinaStudija": null, "brojRecenzija": null, "brojCasova": null }
+]

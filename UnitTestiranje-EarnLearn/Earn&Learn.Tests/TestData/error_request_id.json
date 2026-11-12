@@ -1,0 +1,5 @@
+[
+  { "requestId": "req-001", "ocekivano": true },
+  { "requestId": "", "ocekivano": false },
+  { "requestId": null, "ocekivano": false }
+]

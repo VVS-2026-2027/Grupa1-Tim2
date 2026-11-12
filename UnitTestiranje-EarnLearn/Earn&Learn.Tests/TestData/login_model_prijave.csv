@@ -1,0 +1,6 @@
+email,password,rezultat
+student@test.ba,Lozinka123!,Success
+student@test.ba,pogresna,Failed
+zakljucan@test.ba,Lozinka123!,LockedOut
+nedozvoljen@test.ba,Lozinka123!,NotAllowed
+dvofaktor@test.ba,Lozinka123!,TwoFactorRequired

@@ -1,0 +1,23 @@
+[
+  {
+    "naslov": "Prijava na tutora",
+    "opis": "Tutor se nije pojavio na terminu",
+    "idPrijavitelja": "student-1",
+    "prijavljeniTutorId": "tutor-3",
+    "recenzijaId": null
+  },
+  {
+    "naslov": "Prijava na recenziju",
+    "opis": "Recenzija sadrzi uvrede",
+    "idPrijavitelja": "tutor-2",
+    "prijavljeniTutorId": null,
+    "recenzijaId": 15
+  },
+  {
+    "naslov": "Anonimna prijava",
+    "opis": "Opis bez prijavitelja",
+    "idPrijavitelja": null,
+    "prijavljeniTutorId": null,
+    "recenzijaId": null
+  }
+]

@@ -1,0 +1,7 @@
+[
+  { "email": "student@test.ba", "password": "Lozinka123!", "validno": true,  "brojGresaka": 0 },
+  { "email": "",                "password": "Lozinka123!", "validno": false, "brojGresaka": 1 },
+  { "email": "nije-email",      "password": "Lozinka123!", "validno": false, "brojGresaka": 1 },
+  { "email": "student@test.ba", "password": "",            "validno": false, "brojGresaka": 1 },
+  { "email": "",                "password": "",            "validno": false, "brojGresaka": 2 }
+]

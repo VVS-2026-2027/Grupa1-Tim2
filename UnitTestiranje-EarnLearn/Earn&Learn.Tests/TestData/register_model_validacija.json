@@ -1,0 +1,12 @@
+[
+  { "ime": "Amar",  "prezime": "Hodzic",  "email": "ahodzic1@etf.unsa.ba", "password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": true,  "brojGresaka": 0 },
+  { "ime": "Šejla", "prezime": "Čaušević","email": "scausevic1@etf.unsa.ba","password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": true,  "brojGresaka": 0 },
+  { "ime": "",      "prezime": "Hodzic",  "email": "ahodzic1@etf.unsa.ba", "password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": false, "brojGresaka": 1 },
+  { "ime": "Amar1", "prezime": "Hodzic",  "email": "ahodzic1@etf.unsa.ba", "password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": false, "brojGresaka": 1 },
+  { "ime": "Amar",  "prezime": "Hodzic!", "email": "ahodzic1@etf.unsa.ba", "password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": false, "brojGresaka": 1 },
+  { "ime": "Amar",  "prezime": "Hodzic",  "email": "amar@gmail.com",       "password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": false, "brojGresaka": 1 },
+  { "ime": "Amar",  "prezime": "Hodzic",  "email": "nije-email",           "password": "Lozinka1", "confirmPassword": "Lozinka1", "validno": false, "brojGresaka": 2 },
+  { "ime": "Amar",  "prezime": "Hodzic",  "email": "ahodzic1@etf.unsa.ba", "password": "123",      "confirmPassword": "123",      "validno": false, "brojGresaka": 1 },
+  { "ime": "Amar",  "prezime": "Hodzic",  "email": "ahodzic1@etf.unsa.ba", "password": "Lozinka1", "confirmPassword": "Lozinka2", "validno": false, "brojGresaka": 1 },
+  { "ime": "Amar",  "prezime": "Hodzic",  "email": "ahodzic1@etf.unsa.ba", "password": "",         "confirmPassword": "",         "validno": false, "brojGresaka": 1 }
+]
