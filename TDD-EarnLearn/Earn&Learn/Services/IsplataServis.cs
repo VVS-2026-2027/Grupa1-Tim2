@@ -14,6 +14,11 @@ namespace Earn_Learn.Services
             return Math.Max(ZaokruziNaDvijeDecimale(iznos * ProcenatNaknade), MinimalnaNaknada);
         }
 
+        public RezultatIsplate ProvjeriIsplatu(double stanje, double iznos, DateTime? zadnjaIsplata, DateTime sada)
+        {
+            throw new NotImplementedException();
+        }
+
         private static double ZaokruziNaDvijeDecimale(double vrijednost)
         {
             return Math.Round(vrijednost, 2, MidpointRounding.AwayFromZero);
