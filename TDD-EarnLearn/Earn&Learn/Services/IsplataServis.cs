@@ -1,10 +1,15 @@
 namespace Earn_Learn.Services
 {
     // Pravila za isplatu zarade tutora (F1 - Isplata zarade tutora)
-    public class IsplataServis
+    public class IsplataServis : IIsplataServis
     {
         public const double ProcenatNaknade = 0.02;
         public const double MinimalnaNaknada = 1.0;
+        public const double MinimalniIznosIsplate = 20.0;
+
+        public const string PorukaMinimum = "Minimalan iznos isplate je 20 KM.";
+        public const string PorukaNedovoljnoSredstava = "Nemate dovoljno sredstava za isplatu.";
+        public const string PorukaJednomDnevno = "Dozvoljena je jedna isplata dnevno.";
 
         public double IzracunajNaknadu(double iznos)
         {
@@ -16,22 +21,22 @@ namespace Earn_Learn.Services
 
         public RezultatIsplate ProvjeriIsplatu(double stanje, double iznos, DateTime? zadnjaIsplata, DateTime sada)
         {
-            if (iznos < 20)
-                return new RezultatIsplate { Dozvoljeno = false, Poruka = "Minimalan iznos isplate je 20 KM." };
+            if (iznos < MinimalniIznosIsplate)
+                return RezultatIsplate.Odbijeno(PorukaMinimum);
 
             if (iznos > stanje)
-                return new RezultatIsplate { Dozvoljeno = false, Poruka = "Nemate dovoljno sredstava za isplatu." };
+                return RezultatIsplate.Odbijeno(PorukaNedovoljnoSredstava);
 
-            if (zadnjaIsplata != null && zadnjaIsplata.Value.Date == sada.Date)
-                return new RezultatIsplate { Dozvoljeno = false, Poruka = "Dozvoljena je jedna isplata dnevno." };
+            if (VecIsplacenoDanas(zadnjaIsplata, sada))
+                return RezultatIsplate.Odbijeno(PorukaJednomDnevno);
 
             double naknada = IzracunajNaknadu(iznos);
-            return new RezultatIsplate
-            {
-                Dozvoljeno = true,
-                Naknada = naknada,
-                IznosZaBanku = Math.Round(iznos - naknada, 2, MidpointRounding.AwayFromZero)
-            };
+            return RezultatIsplate.Odobreno(naknada, ZaokruziNaDvijeDecimale(iznos - naknada));
+        }
+
+        private static bool VecIsplacenoDanas(DateTime? zadnjaIsplata, DateTime sada)
+        {
+            return zadnjaIsplata.HasValue && zadnjaIsplata.Value.Date == sada.Date;
         }
 
         private static double ZaokruziNaDvijeDecimale(double vrijednost)
