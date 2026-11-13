@@ -5,7 +5,11 @@ namespace Earn_Learn.Services
     {
         public double IzracunajNaknadu(double iznos)
         {
-            throw new NotImplementedException();
+            if (iznos <= 0)
+                throw new ArgumentOutOfRangeException(nameof(iznos));
+
+            double naknada = Math.Round(iznos * 0.02, 2, MidpointRounding.AwayFromZero);
+            return Math.Max(naknada, 1.0);
         }
     }
 }
