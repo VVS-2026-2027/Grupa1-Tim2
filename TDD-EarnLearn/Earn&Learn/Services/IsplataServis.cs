@@ -16,7 +16,22 @@ namespace Earn_Learn.Services
 
         public RezultatIsplate ProvjeriIsplatu(double stanje, double iznos, DateTime? zadnjaIsplata, DateTime sada)
         {
-            throw new NotImplementedException();
+            if (iznos < 20)
+                return new RezultatIsplate { Dozvoljeno = false, Poruka = "Minimalan iznos isplate je 20 KM." };
+
+            if (iznos > stanje)
+                return new RezultatIsplate { Dozvoljeno = false, Poruka = "Nemate dovoljno sredstava za isplatu." };
+
+            if (zadnjaIsplata != null && zadnjaIsplata.Value.Date == sada.Date)
+                return new RezultatIsplate { Dozvoljeno = false, Poruka = "Dozvoljena je jedna isplata dnevno." };
+
+            double naknada = IzracunajNaknadu(iznos);
+            return new RezultatIsplate
+            {
+                Dozvoljeno = true,
+                Naknada = naknada,
+                IznosZaBanku = Math.Round(iznos - naknada, 2, MidpointRounding.AwayFromZero)
+            };
         }
 
         private static double ZaokruziNaDvijeDecimale(double vrijednost)
