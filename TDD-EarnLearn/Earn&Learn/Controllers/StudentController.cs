@@ -2,6 +2,7 @@
 using Earn_Learn.Enums;
 using Earn_Learn.Models;
 using Earn_Learn.Security;
+using Earn_Learn.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,15 @@ namespace Earn_Learn.Controllers
     {
         private readonly UserManager<Korisnik> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IPopustServis _popustServis;
 
-        public StudentController(UserManager<Korisnik> userManager, ApplicationDbContext context)
+        public StudentController(UserManager<Korisnik> userManager,
+                                 ApplicationDbContext context,
+                                 IPopustServis popustServis)
         {
             _userManager = userManager;
             _context = context;
+            _popustServis = popustServis;
         }
 
         [Authorize]

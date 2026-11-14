@@ -23,9 +23,14 @@ builder.Services.AddDefaultIdentity<Korisnik>(options =>
 
 builder.Services.AddControllersWithViews();
 
+// Servis s pravilima popusta za lojalne studente (F2)
+builder.Services.AddScoped<Earn_Learn.Services.IPopustServis,
+    Earn_Learn.Services.PopustServis>();
+
 var app = builder.Build();
+
 using (var scope = app.Services.CreateScope())
-{
+{ 
     var db = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
     db.Database.EnsureCreated();
 }
