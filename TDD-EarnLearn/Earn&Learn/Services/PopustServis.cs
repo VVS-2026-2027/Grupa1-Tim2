@@ -15,6 +15,11 @@
                 ArgumentOutOfRangeException(nameof(brojOdrzanihCasova), "Broj casova ne moze 
                 biti negativan.");
 }
+        public double IzracunajCijenuSaPopustom(double cijena, int
+brojOdrzanihCasova)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
 return brojOdrzanihCasova switch
