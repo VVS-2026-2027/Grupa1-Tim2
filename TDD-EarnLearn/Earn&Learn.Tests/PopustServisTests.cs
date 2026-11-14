@@ -1,7 +1,7 @@
 ﻿using Earn_Learn.Services;
-namespace Earn_Learn.Tests
 using System.Text.Json;
 
+namespace Earn_Learn.Tests
 {
     [TestClass]
     public class PopustServisTests
