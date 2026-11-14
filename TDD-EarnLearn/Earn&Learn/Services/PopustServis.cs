@@ -18,7 +18,11 @@
         public double IzracunajCijenuSaPopustom(double cijena, int
 brojOdrzanihCasova)
         {
-            throw new NotImplementedException();
+            if (cijena < 0)
+                throw new ArgumentOutOfRangeException(nameof(cijena));
+            int procenat = IzracunajProcenatPopusta(brojOdrzanihCasova);
+            return Math.Round(cijena * (100 - procenat) / 100, 2,
+            MidpointRounding.AwayFromZero);
         }
     }
 }
