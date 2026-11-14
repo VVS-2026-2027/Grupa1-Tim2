@@ -1,0 +1,9 @@
+[
+  { "opis": "Ispod minimuma", "stanje": 100, "iznos": 19.99, "zadnjaIsplata": null, "dozvoljeno": false, "poruka": "Minimalan iznos isplate je 20 KM." },
+  { "opis": "Tacno minimum", "stanje": 100, "iznos": 20, "zadnjaIsplata": null, "dozvoljeno": true, "poruka": "" },
+  { "opis": "Vise od stanja", "stanje": 100, "iznos": 150, "zadnjaIsplata": null, "dozvoljeno": false, "poruka": "Nemate dovoljno sredstava za isplatu." },
+  { "opis": "Cijelo stanje", "stanje": 100, "iznos": 100, "zadnjaIsplata": null, "dozvoljeno": true, "poruka": "" },
+  { "opis": "Vec isplaceno danas", "stanje": 300, "iznos": 50, "zadnjaIsplata": "2026-11-13T09:00:00", "dozvoljeno": false, "poruka": "Dozvoljena je jedna isplata dnevno." },
+  { "opis": "Isplaceno juce", "stanje": 300, "iznos": 50, "zadnjaIsplata": "2026-11-12T23:59:00", "dozvoljeno": true, "poruka": "" },
+  { "opis": "Prazan racun", "stanje": 0, "iznos": 20, "zadnjaIsplata": null, "dozvoljeno": false, "poruka": "Nemate dovoljno sredstava za isplatu." }
+]

@@ -1,0 +1,42 @@
+﻿[
+  {
+    "cijena": 20,
+    "brojCasova": 0,
+    "ocekivanaCijena": 20
+  },
+  {
+    "cijena": 20,
+    "brojCasova": 4,
+    "ocekivanaCijena": 20
+  },
+  {
+    "cijena": 20,
+    "brojCasova": 5,
+    "ocekivanaCijena": 19
+  },
+  {
+    "cijena": 20,
+    "brojCasova": 10,
+    "ocekivanaCijena": 18
+  },
+  {
+    "cijena": 100,
+    "brojCasova": 12,
+    "ocekivanaCijena": 90
+  },
+  {
+    "cijena": 33.33,
+    "brojCasova": 10,
+    "ocekivanaCijena": 30
+  },
+  {
+    "cijena": 17.5,
+    "brojCasova": 6,
+    "ocekivanaCijena": 16.63
+  },
+  {
+    "cijena": 0,
+    "brojCasova": 10,
+    "ocekivanaCijena": 0
+  }
+]
