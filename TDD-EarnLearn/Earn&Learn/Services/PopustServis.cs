@@ -5,7 +5,14 @@
     {
         public int IzracunajProcenatPopusta(int brojOdrzanihCasova)
         {
-            throw new NotImplementedException();
+            if (brojOdrzanihCasova < 0)
+                throw new
+ArgumentOutOfRangeException(nameof(brojOdrzanihCasova));
+            if (brojOdrzanihCasova >= 10)
+                return 10;
+            if (brojOdrzanihCasova >= 5)
+                return 5;
+            return 0;
         }
     }
 }
