@@ -800,12 +800,7 @@ namespace Earn_Learn.Controllers
             if (tutor == null || tutor.Uloga != Uloga.Tutor)
                 return RedirectToAction("Index", "Home");
 
-            var zadnjaIsplata = await _context.Transakcija
-                .Where(t => t.idTutora == tutor.Id && t.statusPlacanja == StatusPlacanja.Isplaceno)
-                .OrderByDescending(t => t.datumUplate)
-                .Select(t => (DateTime?)t.datumUplate)
-                .FirstOrDefaultAsync();
-
+            var zadnjaIsplata = await DohvatiDatumZadnjeIsplate(tutor.Id);
             var rezultat = _isplataServis.ProvjeriIsplatu(tutor.StanjeRacuna, iznos, zadnjaIsplata, DateTime.Now);
 
             if (!rezultat.Dozvoljeno)
@@ -845,6 +840,15 @@ namespace Earn_Learn.Controllers
                 datumSlanja = DateTime.UtcNow,
                 procitano = false
             });
+        }
+
+        private async Task<DateTime?> DohvatiDatumZadnjeIsplate(string idTutora)
+        {
+            return await _context.Transakcija
+                .Where(t => t.idTutora == idTutora && t.statusPlacanja == StatusPlacanja.Isplaceno)
+                .OrderByDescending(t => t.datumUplate)
+                .Select(t => (DateTime?)t.datumUplate)
+                .FirstOrDefaultAsync();
         }
 
         private IActionResult NazadNaNovcanik(string kljuc, string poruka)

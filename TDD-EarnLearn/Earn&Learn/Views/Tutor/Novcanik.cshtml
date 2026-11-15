@@ -184,6 +184,60 @@
         font-weight: 600;
         margin-bottom: 24px;
     }
+
+    /* F1 - Isplata zarade tutora */
+    .alert-greska {
+        background: #fdecea;
+        color: #c62828;
+        border-radius: 10px;
+        padding: 12px 20px;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .nv-isplata-card {
+        background: #fff;
+        border: 1.5px solid #e0e0e0;
+        border-radius: 14px;
+        padding: 22px 24px;
+        margin-bottom: 28px;
+    }
+
+        .nv-isplata-card h3 {
+            font-size: 1.1rem;
+            font-weight: 800;
+            color: #0d2d45;
+            margin-bottom: 4px;
+        }
+
+        .nv-isplata-card p {
+            font-size: .85rem;
+            color: #777;
+            margin-bottom: 14px;
+        }
+
+    .nv-isplata-red {
+        display: flex;
+        gap: 10px;
+    }
+
+        .nv-isplata-red input {
+            flex: 1;
+            border: 1.5px solid #ddd;
+            border-radius: 10px;
+            padding: 10px 16px;
+            font-weight: 700;
+        }
+
+    .btn-isplati {
+        background: #0d2d45;
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 10px 24px;
+        font-weight: 800;
+        cursor: pointer;
+    }
 </style>
 
 <div class="nv-hero">
@@ -209,6 +263,11 @@
         <div class="alert-ok">✓ @TempData["Uspjeh"]</div>
     }
 
+    @if (TempData["Greska"] != null)
+    {
+        <div class="alert-greska">✕ @TempData["Greska"]</div>
+    }
+
     <div class="sim-card">
         <div class="sim-badge">● AKTIVNA</div>
         <div class="chip"></div>
@@ -219,6 +278,19 @@
 
     <div class="nv-info-box">
         ℹ️ Novac se dodaje na vaš račun kada student potvrdi prisustvo na terminu.
+    </div>
+
+    <div class="nv-isplata-card">
+        <h3>Zatraži isplatu</h3>
+        <p>Najmanje 20 KM, jednom dnevno. Naknada je 2% (najmanje 1 KM).</p>
+        <form asp-action="ZatraziIsplatu" method="post">
+            @Html.AntiForgeryToken()
+            <div class="nv-isplata-red">
+                <input type="number" name="iznos" min="20" max="@(stanje.ToString(System.Globalization.CultureInfo.InvariantCulture))" step="0.01"
+                       placeholder="Iznos za isplatu (KM)" required />
+                <button type="submit" class="btn-isplati">Zatraži isplatu</button>
+            </div>
+        </form>
     </div>
 
     <div class="nv-section-title">Historija zarada</div>
@@ -232,9 +304,9 @@
         @foreach (var t in Model)
         {
             <div class="nv-row">
-                <span class="nv-tip">⬆ Uplata od studenta</span>
+                <span class="nv-tip">@(t.statusPlacanja == StatusPlacanja.Isplaceno ? "⬇ Isplata na banku" : "⬆ Uplata od studenta")</span>
                 <span class="nv-datum">@t.datumUplate.ToString("dd.MM.yyyy HH:mm")</span>
-                <span class="nv-iznos-plus">+@(Math.Abs(t.iznos).ToString("N2")) KM</span>
+                <span class="nv-iznos-plus">@(t.statusPlacanja == StatusPlacanja.Isplaceno ? "−" : "+")@(Math.Abs(t.iznos).ToString("N2")) KM</span>
             </div>
         }
     }
