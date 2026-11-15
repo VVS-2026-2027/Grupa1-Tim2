@@ -808,29 +808,37 @@ namespace Earn_Learn.Controllers
             tutor.StanjeRacuna -= iznos;
             await _userManager.UpdateAsync(tutor);
 
+            ZabiljeziTransakcijuIsplate(tutor.Id, iznos);
+            ObavijestiTutoraOIsplati(tutor.Id, rezultat);
+
+            await _context.SaveChangesAsync();
+
+            return NazadNaNovcanik("Uspjeh", $"Isplata je odobrena. Na vaš račun ide {rezultat.IznosZaBanku:N2} KM.");
+        }
+
+        private void ZabiljeziTransakcijuIsplate(string idTutora, double iznos)
+        {
             _context.Transakcija.Add(new Transakcija
             {
                 idStudenta = string.Empty,
-                idTutora = tutor.Id,
+                idTutora = idTutora,
                 iznos = iznos,
                 datumUplate = DateTime.Now,
                 nacinPlacanja = NacinPlacanja.Kartica,
                 statusPlacanja = StatusPlacanja.Isplaceno
             });
+        }
 
+        private void ObavijestiTutoraOIsplati(string idTutora, RezultatIsplate rezultat)
+        {
             _context.Obavjestenje.Add(new Obavjestenje
             {
-                idKorisnika = tutor.Id,
+                idKorisnika = idTutora,
                 naslov = "Isplata poslana",
                 sadrzaj = $"Isplata {rezultat.IznosZaBanku:N2} KM je poslana na vaš račun (naknada {rezultat.Naknada:N2} KM).",
                 datumSlanja = DateTime.UtcNow,
                 procitano = false
             });
-
-            await _context.SaveChangesAsync();
-
-            TempData["Uspjeh"] = $"Isplata je odobrena. Na vaš račun ide {rezultat.IznosZaBanku:N2} KM.";
-            return RedirectToAction(nameof(Novcanik));
         }
 
         private IActionResult NazadNaNovcanik(string kljuc, string poruka)
