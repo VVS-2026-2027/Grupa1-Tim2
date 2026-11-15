@@ -805,6 +805,31 @@ namespace Earn_Learn.Controllers
             if (!rezultat.Dozvoljeno)
                 return NazadNaNovcanik("Greska", rezultat.Poruka);
 
+            tutor.StanjeRacuna -= iznos;
+            await _userManager.UpdateAsync(tutor);
+
+            _context.Transakcija.Add(new Transakcija
+            {
+                idStudenta = string.Empty,
+                idTutora = tutor.Id,
+                iznos = iznos,
+                datumUplate = DateTime.Now,
+                nacinPlacanja = NacinPlacanja.Kartica,
+                statusPlacanja = StatusPlacanja.Isplaceno
+            });
+
+            _context.Obavjestenje.Add(new Obavjestenje
+            {
+                idKorisnika = tutor.Id,
+                naslov = "Isplata poslana",
+                sadrzaj = $"Isplata {rezultat.IznosZaBanku:N2} KM je poslana na vaš račun (naknada {rezultat.Naknada:N2} KM).",
+                datumSlanja = DateTime.UtcNow,
+                procitano = false
+            });
+
+            await _context.SaveChangesAsync();
+
+            TempData["Uspjeh"] = $"Isplata je odobrena. Na vaš račun ide {rezultat.IznosZaBanku:N2} KM.";
             return RedirectToAction(nameof(Novcanik));
         }
 
