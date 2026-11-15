@@ -213,5 +213,98 @@ namespace Earn_Learn.Tests
             Assert.IsNotNull(controller.TempData["Uspjeh"]);
             Assert.IsNull(controller.TempData["Greska"]);
         }
+
+        // ---------- Jedna isplata dnevno ----------
+
+        private static Transakcija NapraviTransakciju(string idTutora, StatusPlacanja status, DateTime datum)
+        {
+            return new Transakcija
+            {
+                idStudenta = string.Empty,
+                idTutora = idTutora,
+                iznos = 50,
+                datumUplate = datum,
+                statusPlacanja = status
+            };
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_VecIsplacenoDanas_OdbijaDruguIsplatu()
+        {
+            using var baza = NapraviBazu();
+            baza.Transakcija.Add(NapraviTransakciju("tutor1", StatusPlacanja.Isplaceno, DateTime.Now));
+            baza.SaveChanges();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(100);
+
+            Assert.AreEqual(IsplataServis.PorukaJednomDnevno, controller.TempData["Greska"]);
+            Assert.AreEqual(300.0, tutor.StanjeRacuna);
+            Assert.AreEqual(1, baza.Transakcija.Count());
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_IsplataBilaJuce_DozvoljavaNovuIsplatu()
+        {
+            using var baza = NapraviBazu();
+            baza.Transakcija.Add(NapraviTransakciju("tutor1", StatusPlacanja.Isplaceno, DateTime.Now.AddDays(-1)));
+            baza.SaveChanges();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(100);
+
+            Assert.AreEqual(200.0, tutor.StanjeRacuna, 0.001);
+            Assert.IsNull(controller.TempData["Greska"]);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DanasPostojiPovratNovca_NeBlokiraIsplatu()
+        {
+            using var baza = NapraviBazu();
+            baza.Transakcija.Add(NapraviTransakciju("tutor1", StatusPlacanja.Vraceno, DateTime.Now));
+            baza.SaveChanges();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(100);
+
+            Assert.AreEqual(200.0, tutor.StanjeRacuna, 0.001);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DrugiTutorIsplatioDanas_NeBlokiraIsplatu()
+        {
+            using var baza = NapraviBazu();
+            baza.Transakcija.Add(NapraviTransakciju("tutor2", StatusPlacanja.Isplaceno, DateTime.Now));
+            baza.SaveChanges();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(100);
+
+            Assert.AreEqual(200.0, tutor.StanjeRacuna, 0.001);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_ViseRanijihIsplata_ServisDobijaDatumNajnovije()
+        {
+            using var baza = NapraviBazu();
+            var starija = new DateTime(2026, 10, 1, 10, 0, 0);
+            var novija = new DateTime(2026, 11, 2, 10, 0, 0);
+            baza.Transakcija.Add(NapraviTransakciju("tutor1", StatusPlacanja.Isplaceno, starija));
+            baza.Transakcija.Add(NapraviTransakciju("tutor1", StatusPlacanja.Isplaceno, novija));
+            baza.SaveChanges();
+            var servis = new Mock<IIsplataServis>();
+            servis.Setup(s => s.ProvjeriIsplatu(It.IsAny<double>(), It.IsAny<double>(),
+                                                It.IsAny<DateTime?>(), It.IsAny<DateTime>()))
+                .Returns(RezultatIsplate.Odbijeno("x"));
+            var controller = NapraviController(UserManagerSaKorisnikom(NapraviTutora(300)), baza, servis.Object);
+
+            await controller.ZatraziIsplatu(50);
+
+            servis.Verify(s => s.ProvjeriIsplatu(300, 50, novija, It.IsAny<DateTime>()), Times.Once);
+        }
     }
 }
