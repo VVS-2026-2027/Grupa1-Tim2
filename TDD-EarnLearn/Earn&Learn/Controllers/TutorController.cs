@@ -803,12 +803,15 @@ namespace Earn_Learn.Controllers
             var rezultat = _isplataServis.ProvjeriIsplatu(tutor.StanjeRacuna, iznos, null, DateTime.Now);
 
             if (!rezultat.Dozvoljeno)
-            {
-                TempData["Greska"] = rezultat.Poruka;
-                return RedirectToAction("Novcanik");
-            }
+                return NazadNaNovcanik("Greska", rezultat.Poruka);
 
-            return RedirectToAction("Novcanik");
+            return RedirectToAction(nameof(Novcanik));
+        }
+
+        private IActionResult NazadNaNovcanik(string kljuc, string poruka)
+        {
+            TempData[kljuc] = poruka;
+            return RedirectToAction(nameof(Novcanik));
         }
 
         // ── OBAVJESTENJA ──
