@@ -141,5 +141,77 @@ namespace Earn_Learn.Tests
 
             servis.Verify(s => s.ProvjeriIsplatu(300, 50, null, It.IsAny<DateTime>()), Times.Once);
         }
+
+        // ---------- Uspješna isplata ----------
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DozvoljenaIsplata_SkidaIznosSaStanja()
+        {
+            using var baza = NapraviBazu();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(200);
+
+            Assert.AreEqual(100.0, tutor.StanjeRacuna, 0.001);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DozvoljenaIsplata_AzuriraTutoraTacnoJednom()
+        {
+            using var baza = NapraviBazu();
+            var tutor = NapraviTutora(300);
+            var userManager = UserManagerSaKorisnikom(tutor);
+            var controller = NapraviController(userManager, baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(200);
+
+            userManager.Verify(m => m.UpdateAsync(tutor), Times.Once);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DozvoljenaIsplata_SnimaTransakcijuSaStatusomIsplaceno()
+        {
+            using var baza = NapraviBazu();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(200);
+
+            var transakcija = baza.Transakcija.Single();
+            Assert.AreEqual("tutor1", transakcija.idTutora);
+            Assert.AreEqual(200.0, transakcija.iznos, 0.001);
+            Assert.AreEqual(StatusPlacanja.Isplaceno, transakcija.statusPlacanja);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DozvoljenaIsplata_SaljeObavjestenjeTutoru()
+        {
+            using var baza = NapraviBazu();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            await controller.ZatraziIsplatu(200);
+
+            var obavjestenje = baza.Obavjestenje.Single();
+            Assert.AreEqual("tutor1", obavjestenje.idKorisnika);
+            Assert.AreEqual("Isplata poslana", obavjestenje.naslov);
+            Assert.IsFalse(obavjestenje.procitano);
+        }
+
+        [TestMethod]
+        public async Task ZatraziIsplatu_DozvoljenaIsplata_VracaNaNovcanikSaPorukomUspjeha()
+        {
+            using var baza = NapraviBazu();
+            var tutor = NapraviTutora(300);
+            var controller = NapraviController(UserManagerSaKorisnikom(tutor), baza, new IsplataServis());
+
+            var result = await controller.ZatraziIsplatu(200) as RedirectToActionResult;
+
+            Assert.IsNotNull(result);
+            Assert.AreEqual("Novcanik", result.ActionName);
+            Assert.IsNotNull(controller.TempData["Uspjeh"]);
+            Assert.IsNull(controller.TempData["Greska"]);
+        }
     }
 }
