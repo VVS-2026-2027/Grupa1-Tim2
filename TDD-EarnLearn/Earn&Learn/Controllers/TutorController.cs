@@ -2,6 +2,7 @@
 using Earn_Learn.Enums;
 using Earn_Learn.Models;
 using Earn_Learn.Security;
+using Earn_Learn.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,11 +15,15 @@ namespace Earn_Learn.Controllers
     {
         private readonly UserManager<Korisnik> _userManager;
         private readonly ApplicationDbContext _context;
+        private readonly IIsplataServis _isplataServis;
 
-        public TutorController(UserManager<Korisnik> userManager, ApplicationDbContext context)
+        public TutorController(UserManager<Korisnik> userManager,
+                               ApplicationDbContext context,
+                               IIsplataServis isplataServis)
         {
             _userManager = userManager;
             _context = context;
+            _isplataServis = isplataServis;
         }
 
         [Authorize]
@@ -782,6 +787,16 @@ namespace Earn_Learn.Controllers
                 .Sum(t => t.iznos);
 
             return View(transakcije);
+        }
+
+        // ── ZATRAZI ISPLATU (F1 - Isplata zarade tutora) ──
+
+        [Authorize]
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ZatraziIsplatu(double iznos)
+        {
+            throw new NotImplementedException();
         }
 
         // ── OBAVJESTENJA ──

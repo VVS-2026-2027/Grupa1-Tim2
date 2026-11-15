@@ -23,6 +23,10 @@ builder.Services.AddDefaultIdentity<Korisnik>(options =>
 
 builder.Services.AddControllersWithViews();
 
+// Servis s pravilima isplate zarade tutora (F1)
+builder.Services.AddScoped<Earn_Learn.Services.IIsplataServis,
+    Earn_Learn.Services.IsplataServis>();
+
 // Servis s pravilima popusta za lojalne studente (F2)
 builder.Services.AddScoped<Earn_Learn.Services.IPopustServis,
     Earn_Learn.Services.PopustServis>();
