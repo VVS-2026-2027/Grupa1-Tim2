@@ -796,7 +796,19 @@ namespace Earn_Learn.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ZatraziIsplatu(double iznos)
         {
-            throw new NotImplementedException();
+            var tutor = await _userManager.GetUserAsync(User);
+            if (tutor == null || tutor.Uloga != Uloga.Tutor)
+                return RedirectToAction("Index", "Home");
+
+            var rezultat = _isplataServis.ProvjeriIsplatu(tutor.StanjeRacuna, iznos, null, DateTime.Now);
+
+            if (!rezultat.Dozvoljeno)
+            {
+                TempData["Greska"] = rezultat.Poruka;
+                return RedirectToAction("Novcanik");
+            }
+
+            return RedirectToAction("Novcanik");
         }
 
         // ── OBAVJESTENJA ──
