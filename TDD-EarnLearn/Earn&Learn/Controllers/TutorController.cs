@@ -800,7 +800,13 @@ namespace Earn_Learn.Controllers
             if (tutor == null || tutor.Uloga != Uloga.Tutor)
                 return RedirectToAction("Index", "Home");
 
-            var rezultat = _isplataServis.ProvjeriIsplatu(tutor.StanjeRacuna, iznos, null, DateTime.Now);
+            var zadnjaIsplata = await _context.Transakcija
+                .Where(t => t.idTutora == tutor.Id && t.statusPlacanja == StatusPlacanja.Isplaceno)
+                .OrderByDescending(t => t.datumUplate)
+                .Select(t => (DateTime?)t.datumUplate)
+                .FirstOrDefaultAsync();
+
+            var rezultat = _isplataServis.ProvjeriIsplatu(tutor.StanjeRacuna, iznos, zadnjaIsplata, DateTime.Now);
 
             if (!rezultat.Dozvoljeno)
                 return NazadNaNovcanik("Greska", rezultat.Poruka);
