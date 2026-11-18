@@ -306,14 +306,7 @@ namespace Earn_Learn.Controllers
                 return RedirectToAction("Dashboard");
             }
 
-            var tutor = await _context.Users.FindAsync(termin.idTutora);
-            double cijena = tutor?.CijenaPoSatu ?? termin.cijena;
-
-            int brojOdrzanihCasova = await _context.Termin
-                .CountAsync(t => t.idStudenta == student.Id
-                              && t.idTutora == termin.idTutora
-                              && t.status == StatusTermina.Odrzan);
-            cijena = _popustServis.IzracunajCijenuSaPopustom(cijena, brojOdrzanihCasova);
+            double cijena = await CijenaSaPopustom(termin, student.Id);
 
             // Provjera stanja novčanika
             if (student.StanjeRacuna < cijena)
@@ -345,6 +338,24 @@ namespace Earn_Learn.Controllers
 
             TempData["Uspjeh"] = "Termin uspješno rezervisan! Novac će biti skinut kada potvrdite prisustvo.";
             return RedirectToAction("Dashboard");
+        }
+
+        // F2: puna cijena tutora umanjena za popust lojalnosti
+        private async Task<double> CijenaSaPopustom(Termin termin, string idStudenta)
+        {
+            var tutor = await _context.Users.FindAsync(termin.idTutora);
+            double punaCijena = tutor?.CijenaPoSatu ?? termin.cijena;
+
+            int brojOdrzanihCasova = await BrojOdrzanihCasovaKodTutora(idStudenta, termin.idTutora);
+            return _popustServis.IzracunajCijenuSaPopustom(punaCijena, brojOdrzanihCasova);
+        }
+
+        // F2: u popust se računaju samo održani časovi kod istog tutora
+        private Task<int> BrojOdrzanihCasovaKodTutora(string idStudenta, string idTutora)
+        {
+            return _context.Termin.CountAsync(t => t.idStudenta == idStudenta
+                                                && t.idTutora == idTutora
+                                                && t.status == StatusTermina.Odrzan);
         }
 
         [AllowAnonymous]
