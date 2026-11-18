@@ -309,6 +309,12 @@ namespace Earn_Learn.Controllers
             var tutor = await _context.Users.FindAsync(termin.idTutora);
             double cijena = tutor?.CijenaPoSatu ?? termin.cijena;
 
+            int brojOdrzanihCasova = await _context.Termin
+                .CountAsync(t => t.idStudenta == student.Id
+                              && t.idTutora == termin.idTutora
+                              && t.status == StatusTermina.Odrzan);
+            cijena = _popustServis.IzracunajCijenuSaPopustom(cijena, brojOdrzanihCasova);
+
             // Provjera stanja novčanika
             if (student.StanjeRacuna < cijena)
             {
